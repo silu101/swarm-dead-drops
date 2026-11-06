@@ -42,6 +42,25 @@
 ## Built-in second finding: monitor persuasion (H6, costs only re-scoring)
 Do the covert agents' cover stories talk the LLM judges down? Re-score every episode with the narrative removed (tool calls and results only). If AUROC rises, the narrative was hiding intent. This builds on Mowatt Gok (2026), "An Alternative to Fully-Aligned Swarms", for related work. Also skim Coffey's "A Spine within the Swarm" (Oct 2026).
 
+## Models (one OpenRouter key covers all of them; prices checked Nov 6, 2026, $/M tokens in/out)
+- **Swarm pilot slate (cheap, tool-calling):**
+  - `deepseek/deepseek-v4.1-flash` (0.05/0.57)
+  - `qwen/qwen3.8-flash` (0.15/0.47)
+  - `z-ai/glm-5.3-flash` (0.15/0.50)
+  - `google/gemma-4-31b-it` (0.20/0.40)
+  - `minimax/minimax-m3.1-flash` (0.15/0.60)
+- **Two judges, same frozen prompt, both batch, each scoring independently:**
+  - **J1:** `openai/gpt-6.1-terra:batch` (0.5/2.5). It also serves as the labeler.
+  - **J2:** `anthropic/claude-sonnet-5.5:batch` (1/5).
+  - Both judges' results are reported in full and compared afterwards.
+  - The swarm uses no OpenAI or Anthropic models, so no judge shares a family with the agents.
+- **Reproducibility:** pin one hosting provider per model through OpenRouter's provider routing, with fallbacks off, and log the provider on every call. Different hosts can serve different quantizations of the same model.
+- **Avoid `:free` variants for the main runs** because of their rate limits.
+- **Pilot pass criteria:**
+  - positive control ≥50%
+  - tool-call error rate under 5%
+- **Estimated cost:** about $0.05 per swarm episode on DeepSeek v4.1 flash, and about $25 for all judge scoring. **The total is likely $40–80, so a $100 budget is safe.**
+
 ## Optional day-3 extras (pick at most one, and only if cheap)
 1. **Watched swarm:** tell the agents a file-audit monitor exists. Do they move to stealthier dead drops, and which monitors break? This connects to the brief's "oversight when agents can edit/delete logs".
 2. **Real-log check:** run M3/M4 on AI Village or Swarm Traces, depending on which records shared-artifact events.
