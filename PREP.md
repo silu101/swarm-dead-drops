@@ -74,6 +74,16 @@ Do the covert agents' cover stories talk the LLM judges down? Re-score every epi
 - **Scale check:** N = 8, covert, 5 seeds. Answers "does it scale?"
 - **Real-log check:** run M3/M4 on AI Village or Swarm Traces, if either records shared-artifact events.
 
+## Reusable tool (after results): a workspace tripwire for agent swarms
+Idea from the team: turn the monitors into a tool others can drop into their own multi-agent setups.
+- **What it does:** records every file operation on a shared folder in an append-only log, then flags the patterns our results show matter: short-lived files (written, read by another agent, deleted within k turns), cross-agent read-after-write, edits that overwrite another agent's file, canary-variant leaks, and shared rare tokens. Output: a per-agent report plus a timeline of flagged events.
+- **Built from what we already have:** `sandbox/fs.py` (audit log), the M3/M4 rules in `monitors/`, and `scoring/success.py` (decodes base64/hex/split content).
+- **Two ways in:**
+  1. *Tool-layer wrapper* (strongest): replace an agent framework's file tools with logged versions. This sees reads too.
+  2. *Folder watcher* (easiest to adopt): watch a real directory with OS file events. This sees writes, edits and deletes but **not reads**, so the dead-drop motif is only partial. Say so in the README.
+- **Plus a canary helper:** generates agent-unique decoy variants to plant in each agent's files, so any leak names its source.
+- **Scope rule:** only after the core results are in (Sun). It should only package code that already works. If time runs out, it goes in the paper as Future Work with the design above.
+
 ## Framing
 Four instructed agents can read as plain collusion. Frame the shared workspace as **stigmergy**: coordination through the environment, with no messages, as in the motivating incident.
 
