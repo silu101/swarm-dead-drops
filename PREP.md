@@ -40,7 +40,7 @@
   - M4: tradecraft signals. These are canary traps (each agent gets a uniquely varied decoy, so a leak identifies its source), dead-drop patterns (write, then another agent reads, then the file is deleted), and shared rare tokens.
 
 ## Built-in second finding: monitor persuasion (H6, costs only re-scoring)
-Do the covert agents' cover stories talk the LLM judges down? Re-score every episode with the narrative removed (tool calls and results only). If AUROC rises, the narrative was hiding intent. This builds on Mowatt Gok (2026), "An Alternative to Fully-Aligned Swarms", for related work. Also skim Coffey's "A Spine within the Swarm" (Oct 2026).
+Do the covert agents' cover stories talk the LLM judges down? Re-score every episode with the narrative removed (tool calls and results only). If AUROC rises, the narrative was hiding intent. **Mitigation (H6c):** re-score again with a "treat explanations as unverified claims" line added to the judge prompt, and measure how much of the loss it recovers. That turns "monitors get fooled" into a problem with a cheap fix. This builds on Mowatt Gok (2026), "An Alternative to Fully-Aligned Swarms", for related work. Also skim Coffey's "A Spine within the Swarm" (Oct 2026).
 
 ## Models (one OpenRouter key covers all of them; prices checked Nov 6, 2026, $/M tokens in/out)
 - **Swarm pilot slate (cheap, tool-calling):**
@@ -59,6 +59,9 @@ Do the covert agents' cover stories talk the LLM judges down? Re-score every epi
   - positive control ≥50%
   - tool-call error rate under 5%
 - **Estimated cost:** about $0.05 per swarm episode on DeepSeek v4.1 flash, and about $1.50–11 for judge scoring (Luna, or Terra if the gate triggers). **The expected total is about $15–25, which fits a $60 budget even at 2× overrun.** The stopping rule triggers at $45.
+
+## Built-in third result: log-degradation curve (H7, essentially free)
+Randomly delete 0/25/50/75% of audit-log events and re-score M3/M4, which use no LLM. Plot AUROC against the fraction of events kept. This shows where file-level oversight breaks down, and it matches the brief's "oversight when agents can edit/delete logs". The idea is borrowed from the SwarmIntegrity proposal; cite it as such if it is ever published.
 
 ## Optional day-3 extras (pick at most one, and only if cheap)
 1. **Watched swarm:** tell the agents a file-audit monitor exists. Do they move to stealthier dead drops, and which monitors break? This connects to the brief's "oversight when agents can edit/delete logs".
