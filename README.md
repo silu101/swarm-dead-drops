@@ -22,4 +22,6 @@ API keys go in `.env`, which git ignores. Never commit keys.
 python3 -m unittest discover -s tests            # offline tests, no API calls
 python3 -m scripts.run_batch --dry-run --label smoke --seeds 1 2 --turns 6 --goal covert benign
 ```
+Scoring stored episodes (M1–M4, labels, AUROC table): see the docstring of `scripts/score.py`.
+
 Real runs need `OPENROUTER_API_KEY=...` in `.env`. Spend is logged to `results/spend.jsonl`; calls stop at $45 (`BUDGET_STOP_USD`).
