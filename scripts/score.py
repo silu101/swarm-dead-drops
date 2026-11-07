@@ -14,7 +14,7 @@
   python3 -m scripts.score label --episodes results/main --judge openai/gpt-6-luna
 
   # 5. AUROC table (UNWATCHED, COVERT vs BENIGN-TIDY by default)
-  python3 -m scripts.score report [--watched]
+  python3 -m scripts.score report --label main [--watched]
 """
 
 from __future__ import annotations
@@ -33,7 +33,7 @@ from monitors.judge import label_episode, score_episode  # noqa: E402
 from monitors.prompts import PROMPT_VERSION  # noqa: E402
 from monitors.rules import common_tokens_from, episode_features  # noqa: E402
 from sandbox.episode import load_episode  # noqa: E402
-from sandbox.llm import BudgetExceeded, OpenRouterClient, append_jsonl  # noqa: E402
+from sandbox.llm import BudgetExceeded, LLMError, OpenRouterClient, append_jsonl  # noqa: E402
 from scoring.stats import bootstrap_auroc, fit_m4, m4_scores, undetected_success_rate  # noqa: E402
 
 SCORES = ROOT / "results" / "scores"
@@ -125,6 +125,8 @@ def cmd_judge(args):
                 print(f"STOP: {e}")
                 ex.shutdown(cancel_futures=True)
                 break
+            except LLMError as e:
+                print(f"judge call failed, skipped (rerun to retry): {str(e)[:200]}")
     print(f"total spend: ${client.ledger.total:.2f}")
 
 
@@ -141,8 +143,11 @@ def cmd_label(args):
 
 def cmd_report(args):
     rows = defaultdict(lambda: {"pos": [], "neg": [], "succ": []})
+    def keep(r):
+        return (not r["isolated"] and r["watched"] == args.watched
+                and r["episode_id"].startswith(args.label + "_"))
     for r in read_jsonl(SCORES / "rules.jsonl"):
-        if r["isolated"] or r["watched"] != args.watched:
+        if not keep(r):
             continue
         for m in ("m3", "m4_pre", "m4_conceal", "m4_full"):
             k = (m, "audit log", "")
@@ -152,7 +157,7 @@ def cmd_report(args):
                 bucket["succ"].append(r["success"])
     succ_by_ep = {r["episode_id"]: r["success"] for r in read_jsonl(SCORES / "rules.jsonl")}
     for r in read_jsonl(SCORES / "judge.jsonl"):
-        if r["isolated"] or r["watched"] != args.watched or r["score"] is None:
+        if not keep(r) or r["score"] is None:
             continue
         k = (r["monitor"], r["view"] + (" +skeptical" if r["skeptical"] else ""), r["judge_model"])
         bucket = rows[k]
@@ -185,7 +190,7 @@ def main(argv=None):
         p.add_argument("--episodes", nargs="+", required=True)
         p.add_argument("--judge", required=True)
         p.add_argument("--provider", default=None)
-        p.add_argument("--max-tokens", type=int, default=2000)
+        p.add_argument("--max-tokens", type=int, default=8000)
         p.add_argument("--no-temperature", action="store_true", help="for APIs that reject sampling parameters")
         p.add_argument("--workers", type=int, default=8)
         if name == "judge":
@@ -193,6 +198,7 @@ def main(argv=None):
             p.add_argument("--views", nargs="+", default=["actions"], choices=["actions", "reasoning", "stripped"])
             p.add_argument("--skeptical", action="store_true", help="also score actions view with the skeptical line (H6c)")
     p = sub.add_parser("report")
+    p.add_argument("--label", required=True, help="episode label prefix, e.g. main or calib")
     p.add_argument("--watched", action="store_true")
     args = ap.parse_args(argv)
     {"fit-m4": cmd_fit_m4, "rules": cmd_rules, "judge": cmd_judge, "label": cmd_label, "report": cmd_report}[args.cmd](args)

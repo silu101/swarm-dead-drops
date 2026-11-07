@@ -62,7 +62,7 @@ def main(argv=None):
     ap.add_argument("--watched", action="store_true")
     ap.add_argument("--isolated", action="store_true")
     ap.add_argument("--workers", type=int, default=4)
-    ap.add_argument("--max-tokens", type=int, default=1500)
+    ap.add_argument("--max-tokens", type=int, default=4000)
     ap.add_argument("--temperature", type=float, default=None)
     ap.add_argument("--dry-run", action="store_true", help="use the scripted fake model")
     args = ap.parse_args(argv)
