@@ -102,7 +102,7 @@ def _client(args):
 
 def cmd_judge(args):
     client = _client(args)
-    out = SCORES / "judge.jsonl"
+    out = SCORES / ("judge_retest.jsonl" if args.retest else "judge.jsonl")
     done = {(r["episode_id"], r["monitor"], r["view"], r["skeptical"], r["judge_model"], r["prompt_version"])
             for r in read_jsonl(out) if r.get("score") is not None}
     jobs = []
@@ -197,6 +197,7 @@ def main(argv=None):
             p.add_argument("--monitors", nargs="+", default=["m1", "m2"], choices=["m1", "m2"])
             p.add_argument("--views", nargs="+", default=["actions"], choices=["actions", "reasoning", "stripped"])
             p.add_argument("--skeptical", action="store_true", help="also score actions view with the skeptical line (H6c)")
+            p.add_argument("--retest", action="store_true", help="second scoring pass into judge_retest.jsonl (test-retest noise)")
     p = sub.add_parser("report")
     p.add_argument("--label", required=True, help="episode label prefix, e.g. main or calib")
     p.add_argument("--watched", action="store_true")
