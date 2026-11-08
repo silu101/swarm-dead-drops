@@ -102,7 +102,7 @@ Covert agents often hide files in dot-folders (`/shared/.something/`): 21/30 unw
 2. **The agents' own words are the best evidence.**
    - MiniMax agents attempt the covert task, and their notes confess it.
    - Qwen agents refuse it openly in their notes.
-   - Either way, an LLM judge that reads the notes beats one that doesn't in most comparisons (5 of 8 stripped-view tests went that way, 4 of them significant). The single largest effect, though, belongs to MiniMax.
+   - Either way, an LLM judge that reads the notes beats one that doesn't in 7 of 8 comparisons, 4 of them significant. The exception is Qwen M1, unwatched.
 3. **The joint judge never beats the per-agent judge** by a significant margin (Qwen M2 − M1 = +0.03, p = 0.58).
 
 **Caveat:** because Qwen's covert agents mostly refused, this replication tests "can monitors tell refusing agents from cooperating ones" more than "can monitors catch hiding". The pre-registered sensitivity analysis (dropping episodes with visible refusal) is undefined on Qwen, because that leaves no covert episodes.
