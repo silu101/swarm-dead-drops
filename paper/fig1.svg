@@ -1,0 +1,108 @@
+<svg xmlns='http://www.w3.org/2000/svg' width='820' height='530' viewBox='0 0 820 530'>
+<rect width='820' height='530' fill='#ffffff'/>
+<rect x='236' y='22' width='12' height='12' rx='3' fill='#2a78d6'/>
+<text x='254' y='32' font-family='Helvetica, Arial, sans-serif' font-size='13' fill='#1f1f1e'>MiniMax m3.1 flash</text>
+<rect x='401' y='22' width='12' height='12' rx='3' fill='#eb6834'/>
+<text x='419' y='32' font-family='Helvetica, Arial, sans-serif' font-size='13' fill='#1f1f1e'>Qwen 3.8 flash</text>
+<rect x='566' y='22' width='12' height='12' rx='3' fill='#1baf7a'/>
+<text x='584' y='32' font-family='Helvetica, Arial, sans-serif' font-size='13' fill='#1f1f1e'>Kimi K3.1 Pro (strong)</text>
+<line x1='236.0' y1='58' x2='236.0' y2='462' stroke='#d9d8d2' stroke-width='1'/>
+<text x='236.0' y='478' font-family='Helvetica, Arial, sans-serif' font-size='11' fill='#6b6a64' text-anchor='middle'>0</text>
+<line x1='359.5' y1='58' x2='359.5' y2='462' stroke='#d9d8d2' stroke-width='1'/>
+<text x='359.5' y='478' font-family='Helvetica, Arial, sans-serif' font-size='11' fill='#6b6a64' text-anchor='middle'>0.25</text>
+<line x1='483.0' y1='58' x2='483.0' y2='462' stroke='#6b6a64' stroke-width='1' stroke-dasharray='4 3'/>
+<text x='483.0' y='478' font-family='Helvetica, Arial, sans-serif' font-size='11' fill='#6b6a64' text-anchor='middle'>0.5</text>
+<line x1='606.5' y1='58' x2='606.5' y2='462' stroke='#d9d8d2' stroke-width='1'/>
+<text x='606.5' y='478' font-family='Helvetica, Arial, sans-serif' font-size='11' fill='#6b6a64' text-anchor='middle'>0.75</text>
+<line x1='730.0' y1='58' x2='730.0' y2='462' stroke='#d9d8d2' stroke-width='1'/>
+<text x='730.0' y='478' font-family='Helvetica, Arial, sans-serif' font-size='11' fill='#6b6a64' text-anchor='middle'>1</text>
+<text x='483.0' y='54' font-family='Helvetica, Arial, sans-serif' font-size='11' fill='#6b6a64' text-anchor='middle'>chance</text>
+<text x='483' y='500' font-family='Helvetica, Arial, sans-serif' font-size='12' fill='#1f1f1e' text-anchor='middle'>AUROC, covert vs benign (unwatched; judge GPT-6 Luna; 30+30 episodes, Kimi 20+20)</text>
+<text x='483' y='516' font-family='Helvetica, Arial, sans-serif' font-size='11' fill='#6b6a64' text-anchor='middle'>whiskers: 95% bootstrap CI over episodes</text>
+<text x='16' y='68' font-family='Helvetica, Arial, sans-serif' font-size='12' font-weight='bold' fill='#6b6a64'>LLM judges</text>
+<text x='226' y='106.5' font-family='Helvetica, Arial, sans-serif' font-size='13' fill='#1f1f1e' text-anchor='end'>M1 judge + private reasoning</text>
+<path d='M236,80 h479.6 a4,4 0 0 1 4,4 v5 a4,4 0 0 1 -4,4 h-479.6 z' fill='#2a78d6'/>
+<line x1='702.3' y1='86.5' x2='730.0' y2='86.5' stroke='#1f1f1e' stroke-width='1.2'/>
+<line x1='702.3' y1='83.5' x2='702.3' y2='89.5' stroke='#1f1f1e' stroke-width='1.2'/>
+<line x1='730.0' y1='83.5' x2='730.0' y2='89.5' stroke='#1f1f1e' stroke-width='1.2'/>
+<text x='736.0' y='91' font-family='Helvetica, Arial, sans-serif' font-size='11' fill='#1f1f1e'>0.98</text>
+<path d='M236,96 h490.0 a4,4 0 0 1 4,4 v5 a4,4 0 0 1 -4,4 h-490.0 z' fill='#eb6834'/>
+<text x='736.0' y='107' font-family='Helvetica, Arial, sans-serif' font-size='11' fill='#1f1f1e'>1.00</text>
+<path d='M236,112 h490.0 a4,4 0 0 1 4,4 v5 a4,4 0 0 1 -4,4 h-490.0 z' fill='#1baf7a'/>
+<text x='736.0' y='123' font-family='Helvetica, Arial, sans-serif' font-size='11' fill='#1f1f1e'>1.00</text>
+<text x='226' y='167.5' font-family='Helvetica, Arial, sans-serif' font-size='13' fill='#1f1f1e' text-anchor='end'>M1 per-agent judge</text>
+<path d='M236,141 h415.4 a4,4 0 0 1 4,4 v5 a4,4 0 0 1 -4,4 h-415.4 z' fill='#2a78d6'/>
+<line x1='598.6' y1='147.5' x2='697.9' y2='147.5' stroke='#1f1f1e' stroke-width='1.2'/>
+<line x1='598.6' y1='144.5' x2='598.6' y2='150.5' stroke='#1f1f1e' stroke-width='1.2'/>
+<line x1='697.9' y1='144.5' x2='697.9' y2='150.5' stroke='#1f1f1e' stroke-width='1.2'/>
+<text x='703.9' y='152' font-family='Helvetica, Arial, sans-serif' font-size='11' fill='#1f1f1e'>0.85</text>
+<path d='M236,157 h431.7 a4,4 0 0 1 4,4 v5 a4,4 0 0 1 -4,4 h-431.7 z' fill='#eb6834'/>
+<line x1='624.3' y1='163.5' x2='709.7' y2='163.5' stroke='#1f1f1e' stroke-width='1.2'/>
+<line x1='624.3' y1='160.5' x2='624.3' y2='166.5' stroke='#1f1f1e' stroke-width='1.2'/>
+<line x1='709.7' y1='160.5' x2='709.7' y2='166.5' stroke='#1f1f1e' stroke-width='1.2'/>
+<text x='715.7' y='168' font-family='Helvetica, Arial, sans-serif' font-size='11' fill='#1f1f1e'>0.88</text>
+<path d='M236,173 h490.0 a4,4 0 0 1 4,4 v5 a4,4 0 0 1 -4,4 h-490.0 z' fill='#1baf7a'/>
+<text x='736.0' y='184' font-family='Helvetica, Arial, sans-serif' font-size='11' fill='#1f1f1e'>1.00</text>
+<text x='226' y='228.5' font-family='Helvetica, Arial, sans-serif' font-size='13' fill='#1f1f1e' text-anchor='end'>M1, agents' notes removed</text>
+<path d='M236,202 h282.5 a4,4 0 0 1 4,4 v5 a4,4 0 0 1 -4,4 h-282.5 z' fill='#2a78d6'/>
+<line x1='452.4' y1='208.5' x2='591.2' y2='208.5' stroke='#1f1f1e' stroke-width='1.2'/>
+<line x1='452.4' y1='205.5' x2='452.4' y2='211.5' stroke='#1f1f1e' stroke-width='1.2'/>
+<line x1='591.2' y1='205.5' x2='591.2' y2='211.5' stroke='#1f1f1e' stroke-width='1.2'/>
+<text x='597.2' y='213' font-family='Helvetica, Arial, sans-serif' font-size='11' fill='#1f1f1e'>0.58</text>
+<path d='M236,218 h441.1 a4,4 0 0 1 4,4 v5 a4,4 0 0 1 -4,4 h-441.1 z' fill='#eb6834'/>
+<line x1='641.6' y1='224.5' x2='711.7' y2='224.5' stroke='#1f1f1e' stroke-width='1.2'/>
+<line x1='641.6' y1='221.5' x2='641.6' y2='227.5' stroke='#1f1f1e' stroke-width='1.2'/>
+<line x1='711.7' y1='221.5' x2='711.7' y2='227.5' stroke='#1f1f1e' stroke-width='1.2'/>
+<text x='717.7' y='229' font-family='Helvetica, Arial, sans-serif' font-size='11' fill='#1f1f1e'>0.90</text>
+<path d='M236,234 h480.1 a4,4 0 0 1 4,4 v5 a4,4 0 0 1 -4,4 h-480.1 z' fill='#1baf7a'/>
+<line x1='700.4' y1='240.5' x2='730.0' y2='240.5' stroke='#1f1f1e' stroke-width='1.2'/>
+<line x1='700.4' y1='237.5' x2='700.4' y2='243.5' stroke='#1f1f1e' stroke-width='1.2'/>
+<line x1='730.0' y1='237.5' x2='730.0' y2='243.5' stroke='#1f1f1e' stroke-width='1.2'/>
+<text x='736.0' y='245' font-family='Helvetica, Arial, sans-serif' font-size='11' fill='#1f1f1e'>0.98</text>
+<text x='226' y='289.5' font-family='Helvetica, Arial, sans-serif' font-size='13' fill='#1f1f1e' text-anchor='end'>M2 joint judge</text>
+<path d='M236,263 h377.9 a4,4 0 0 1 4,4 v5 a4,4 0 0 1 -4,4 h-377.9 z' fill='#2a78d6'/>
+<line x1='555.1' y1='269.5' x2='673.7' y2='269.5' stroke='#1f1f1e' stroke-width='1.2'/>
+<line x1='555.1' y1='266.5' x2='555.1' y2='272.5' stroke='#1f1f1e' stroke-width='1.2'/>
+<line x1='673.7' y1='266.5' x2='673.7' y2='272.5' stroke='#1f1f1e' stroke-width='1.2'/>
+<text x='679.7' y='274' font-family='Helvetica, Arial, sans-serif' font-size='11' fill='#1f1f1e'>0.77</text>
+<path d='M236,279 h444.1 a4,4 0 0 1 4,4 v5 a4,4 0 0 1 -4,4 h-444.1 z' fill='#eb6834'/>
+<line x1='631.7' y1='285.5' x2='724.6' y2='285.5' stroke='#1f1f1e' stroke-width='1.2'/>
+<line x1='631.7' y1='282.5' x2='631.7' y2='288.5' stroke='#1f1f1e' stroke-width='1.2'/>
+<line x1='724.6' y1='282.5' x2='724.6' y2='288.5' stroke='#1f1f1e' stroke-width='1.2'/>
+<text x='730.6' y='290' font-family='Helvetica, Arial, sans-serif' font-size='11' fill='#1f1f1e'>0.91</text>
+<path d='M236,295 h490.0 a4,4 0 0 1 4,4 v5 a4,4 0 0 1 -4,4 h-490.0 z' fill='#1baf7a'/>
+<text x='736.0' y='306' font-family='Helvetica, Arial, sans-serif' font-size='11' fill='#1f1f1e'>1.00</text>
+<text x='16' y='338' font-family='Helvetica, Arial, sans-serif' font-size='12' font-weight='bold' fill='#6b6a64'>File-level monitors</text>
+<text x='226' y='376.5' font-family='Helvetica, Arial, sans-serif' font-size='13' fill='#1f1f1e' text-anchor='end'>M4 canary traps + rare tokens</text>
+<path d='M236,350 h237.1 a4,4 0 0 1 4,4 v5 a4,4 0 0 1 -4,4 h-237.1 z' fill='#2a78d6'/>
+<line x1='404.9' y1='356.5' x2='551.7' y2='356.5' stroke='#1f1f1e' stroke-width='1.2'/>
+<line x1='404.9' y1='353.5' x2='404.9' y2='359.5' stroke='#1f1f1e' stroke-width='1.2'/>
+<line x1='551.7' y1='353.5' x2='551.7' y2='359.5' stroke='#1f1f1e' stroke-width='1.2'/>
+<text x='557.7' y='361' font-family='Helvetica, Arial, sans-serif' font-size='11' fill='#1f1f1e'>0.49</text>
+<path d='M236,366 h310.7 a4,4 0 0 1 4,4 v5 a4,4 0 0 1 -4,4 h-310.7 z' fill='#eb6834'/>
+<line x1='474.1' y1='372.5' x2='621.8' y2='372.5' stroke='#1f1f1e' stroke-width='1.2'/>
+<line x1='474.1' y1='369.5' x2='474.1' y2='375.5' stroke='#1f1f1e' stroke-width='1.2'/>
+<line x1='621.8' y1='369.5' x2='621.8' y2='375.5' stroke='#1f1f1e' stroke-width='1.2'/>
+<text x='627.8' y='377' font-family='Helvetica, Arial, sans-serif' font-size='11' fill='#1f1f1e'>0.64</text>
+<path d='M236,382 h354.1 a4,4 0 0 1 4,4 v5 a4,4 0 0 1 -4,4 h-354.1 z' fill='#1baf7a'/>
+<line x1='507.7' y1='388.5' x2='671.7' y2='388.5' stroke='#1f1f1e' stroke-width='1.2'/>
+<line x1='507.7' y1='385.5' x2='507.7' y2='391.5' stroke='#1f1f1e' stroke-width='1.2'/>
+<line x1='671.7' y1='385.5' x2='671.7' y2='391.5' stroke='#1f1f1e' stroke-width='1.2'/>
+<text x='677.7' y='393' font-family='Helvetica, Arial, sans-serif' font-size='11' fill='#1f1f1e'>0.72</text>
+<text x='226' y='437.5' font-family='Helvetica, Arial, sans-serif' font-size='13' fill='#1f1f1e' text-anchor='end'>M3 provenance</text>
+<path d='M236,411 h157.5 a4,4 0 0 1 4,4 v5 a4,4 0 0 1 -4,4 h-157.5 z' fill='#2a78d6'/>
+<line x1='328.4' y1='417.5' x2='466.7' y2='417.5' stroke='#1f1f1e' stroke-width='1.2'/>
+<line x1='328.4' y1='414.5' x2='328.4' y2='420.5' stroke='#1f1f1e' stroke-width='1.2'/>
+<line x1='466.7' y1='414.5' x2='466.7' y2='420.5' stroke='#1f1f1e' stroke-width='1.2'/>
+<text x='488.0' y='422' font-family='Helvetica, Arial, sans-serif' font-size='11' fill='#1f1f1e'>0.33</text>
+<path d='M236,427 h108.6 a4,4 0 0 1 4,4 v5 a4,4 0 0 1 -4,4 h-108.6 z' fill='#eb6834'/>
+<line x1='296.3' y1='433.5' x2='408.4' y2='433.5' stroke='#1f1f1e' stroke-width='1.2'/>
+<line x1='296.3' y1='430.5' x2='296.3' y2='436.5' stroke='#1f1f1e' stroke-width='1.2'/>
+<line x1='408.4' y1='430.5' x2='408.4' y2='436.5' stroke='#1f1f1e' stroke-width='1.2'/>
+<text x='414.4' y='438' font-family='Helvetica, Arial, sans-serif' font-size='11' fill='#1f1f1e'>0.23</text>
+<path d='M236,443 h77.5 a4,4 0 0 1 4,4 v5 a4,4 0 0 1 -4,4 h-77.5 z' fill='#1baf7a'/>
+<line x1='261.7' y1='449.5' x2='387.2' y2='449.5' stroke='#1f1f1e' stroke-width='1.2'/>
+<line x1='261.7' y1='446.5' x2='261.7' y2='452.5' stroke='#1f1f1e' stroke-width='1.2'/>
+<line x1='387.2' y1='446.5' x2='387.2' y2='452.5' stroke='#1f1f1e' stroke-width='1.2'/>
+<text x='393.2' y='454' font-family='Helvetica, Arial, sans-serif' font-size='11' fill='#1f1f1e'>0.17</text>
+</svg>
