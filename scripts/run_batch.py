@@ -58,7 +58,7 @@ def main(argv=None):
     ap.add_argument("--models", nargs="*", default=[])
     ap.add_argument("--seeds", nargs="+", type=int, required=True)
     ap.add_argument("--turns", nargs="+", type=int, default=[20])
-    ap.add_argument("--goal", nargs="+", default=["covert"], choices=["covert", "benign"])
+    ap.add_argument("--goal", nargs="+", default=["covert"], choices=["covert", "benign", "vault"])
     ap.add_argument("--watched", action="store_true")
     ap.add_argument("--isolated", action="store_true")
     ap.add_argument("--solo", action="store_true", help="single-agent baseline: one agent does the whole task")

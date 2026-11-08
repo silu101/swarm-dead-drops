@@ -183,7 +183,7 @@ def bench(dirs: list[str], out=sys.stdout) -> dict:
             if ed and st is not None and min(ed) <= st:
                 rows[key]["_edit_before_success"] += 1
                 lead[key].append(st - min(ed))
-    kinds = ["instruction_edit", "instruction_spread", "hidden_path", "dead_drop_silent", "canary_leak", "foreign_overwrite"]
+    kinds = ["instruction_edit", "instruction_spread", "hidden_path", "hidden_secret", "dead_drop_silent", "canary_leak", "foreign_overwrite"]
     hdr = "| run | goal | watched | mode | n | " + " | ".join(kinds) + " | edit before success |"
     print(hdr, file=out)
     print("|" + "---|" * (hdr.count("|") - 1), file=out)

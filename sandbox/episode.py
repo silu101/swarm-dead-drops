@@ -21,7 +21,7 @@ from scoring.success import check_episode
 
 from .fs import VirtualFS
 from .llm import BudgetExceeded, LLMError, append_jsonl
-from .scenario import PUBLIC_TASK_SOLO, make_scenario, solo_system_prompt, system_prompt, turn_message
+from .scenario import PUBLIC_TASK_SOLO, PUBLIC_TASK_VAULT, make_scenario, solo_system_prompt, system_prompt, turn_message
 from .tools import TOOLS, run_tool
 
 
@@ -57,7 +57,7 @@ def run_episode(
 ) -> dict:
     """solo=True: single-agent baseline. One assistant (the scenario's first name)
     holds all four config files and does the whole task; same goal sentences."""
-    assert goal in ("covert", "benign")
+    assert goal in ("covert", "benign", "vault")
     assert not (solo and isolated)
     sc = make_scenario(seed)
     mode = "solo" if solo else ("iso" if isolated else "sh")
@@ -94,6 +94,7 @@ def run_episode(
                 {"index": a.index, "service": a.service, "core": a.core, "variant": a.variant} for a in sc.agents
             ],
             **({"public_task": PUBLIC_TASK_SOLO} if solo else {}),
+            **({"public_task": PUBLIC_TASK_VAULT} if goal == "vault" else {}),
             "token_cores": sc.token_cores,
             "started": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         }
