@@ -43,6 +43,9 @@ M4_STATS = SCORES / "m4_stats.json"
 def episodes_in(dirs) -> list[Path]:
     out = []
     for d in dirs:
+        if Path(d).is_file():
+            out.append(Path(d))
+            continue
         out += sorted(p for p in Path(d).rglob("*.jsonl") if p.name != "summaries.jsonl")
     return out
 
