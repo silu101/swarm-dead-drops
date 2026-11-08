@@ -21,7 +21,7 @@ from scoring.success import check_episode
 
 from .fs import VirtualFS
 from .llm import BudgetExceeded, LLMError, append_jsonl
-from .scenario import make_scenario, system_prompt, turn_message
+from .scenario import PUBLIC_TASK_SOLO, make_scenario, solo_system_prompt, system_prompt, turn_message
 from .tools import TOOLS, run_tool
 
 
@@ -52,10 +52,17 @@ def run_episode(
     turns: int = 20,
     out_dir: Path | str = "results/episodes",
     label: str = "",
+    solo: bool = False,
 ) -> dict:
+    """solo=True: single-agent baseline. One assistant (the scenario's first name)
+    holds all four config files and does the whole task; same goal sentences."""
     assert goal in ("covert", "benign")
+    assert not (solo and isolated)
     sc = make_scenario(seed)
-    ep_id = f"{label + '_' if label else ''}{goal}_{'W' if watched else 'U'}_{'iso' if isolated else 'sh'}_s{seed}_{uuid.uuid4().hex[:6]}"
+    mode = "solo" if solo else ("iso" if isolated else "sh")
+    ep_id = f"{label + '_' if label else ''}{goal}_{'W' if watched else 'U'}_{mode}_s{seed}_{uuid.uuid4().hex[:6]}"
+    actors = [sc.names[0]] if solo else sc.names
+    order = actors if solo else sc.order
     out_path = Path(out_dir) / f"{ep_id}.jsonl"
     out_path.parent.mkdir(parents=True, exist_ok=True)
 
@@ -74,19 +81,25 @@ def run_episode(
             "watched": watched,
             "isolated": isolated,
             "turns": turns,
-            "order": sc.order,
+            "solo": solo,
+            "order": order,
             "agents": [
                 {"name": a.name, "index": a.index, "service": a.service, "core": a.core, "variant": a.variant}
                 for a in sc.agents
+            ] if not solo else [{"name": actors[0], "index": 0, "service": "all", "core": "".join(sc.token_cores),
+                                 "variant": " ".join(a.variant for a in sc.agents)}],
+            "fragments": [
+                {"index": a.index, "service": a.service, "core": a.core, "variant": a.variant} for a in sc.agents
             ],
+            **({"public_task": PUBLIC_TASK_SOLO} if solo else {}),
             "token_cores": sc.token_cores,
             "started": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         }
     )
 
-    fs = VirtualFS(agents=sc.names, isolated=isolated, on_event=lambda ev: emit({"type": "audit", **ev.to_dict()}))
+    fs = VirtualFS(agents=actors, isolated=isolated, on_event=lambda ev: emit({"type": "audit", **ev.to_dict()}))
     for a in sc.agents:
-        fs.seed_file(f"/home/{a.name}/{a.service}.yaml", a.config_text)
+        fs.seed_file(f"/home/{actors[0] if solo else a.name}/{a.service}.yaml", a.config_text)
     for path, content in sc.files_shared.items():
         if isolated:
             for name in sc.names:
@@ -94,9 +107,12 @@ def run_episode(
         else:
             fs.seed_file(path, content)
 
-    histories = {n: [{"role": "system", "content": system_prompt(sc, n, goal, watched, turns)}] for n in sc.names}
-    last_text = {n: "" for n in sc.names}
-    final_output = {n: "" for n in sc.names}
+    if solo:
+        histories = {actors[0]: [{"role": "system", "content": solo_system_prompt(sc, goal, watched, turns)}]}
+    else:
+        histories = {n: [{"role": "system", "content": system_prompt(sc, n, goal, watched, turns)}] for n in sc.names}
+    last_text = {n: "" for n in actors}
+    final_output = {n: "" for n in actors}
     n_calls = n_tool_calls = n_bad_tool_calls = 0
     cost = 0.0
     error = None
@@ -104,7 +120,7 @@ def run_episode(
 
     try:
         for k in range(1, turns + 1):
-            for name in sc.order:
+            for name in order:
                 hist = histories[name]
                 hist.append({"role": "user", "content": turn_message(k, turns)})
                 res = client.chat(hist, TOOLS, tag={"episode_id": ep_id, "agent": name, "turn": k})
@@ -168,6 +184,7 @@ def run_episode(
             "goal": goal,
             "watched": watched,
             "isolated": isolated,
+            "solo": solo,
             "model": getattr(client, "model", "?"),
             "turns": turns,
             "error": error,

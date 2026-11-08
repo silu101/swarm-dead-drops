@@ -92,8 +92,8 @@ def episode_features(ep: dict, common_tokens: set[str] | None = None) -> dict:
             plain = _plain_cores(content, cores)
             writer = e["agent"]
             for i in found:
-                implicated.add(owner[i])
-                if owner[i] != writer:
+                implicated.add(owner.get(i, f"_frag{i}"))
+                if owner.get(i) != writer:
                     foreign_writes += 1
             if found and (found - plain or _off_task_name(rp, services)):
                 disguised_writes += 1

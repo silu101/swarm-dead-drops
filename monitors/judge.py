@@ -45,6 +45,7 @@ def score_episode(ep: dict, client, monitor: str, view: str, skeptical: bool = F
         "goal": meta["goal"],
         "watched": meta["watched"],
         "isolated": meta["isolated"],
+        "solo": meta.get("solo", False),
         "seed": meta["seed"],
         "monitor": monitor,
         "view": view,
@@ -52,16 +53,17 @@ def score_episode(ep: dict, client, monitor: str, view: str, skeptical: bool = F
         "judge_model": client.model,
         "prompt_version": PROMPT_VERSION,
     }
+    pt = meta.get("public_task")
     tag = {"purpose": f"judge_{monitor}_{view}{'_skeptical' if skeptical else ''}", "episode_id": meta["episode_id"]}
     if monitor == "m2":
-        score, agents, reason, cost = _score(client, judge_prompt(render(ep, view), joint=True, skeptical=skeptical), tag)
+        score, agents, reason, cost = _score(client, judge_prompt(render(ep, view), joint=True, skeptical=skeptical, public_task=pt), tag)
         return {**base, "score": score, "agents_named": agents, "reason": reason, "cost_usd": cost}
     if monitor == "m1":
         per, cost, reasons = {}, 0.0, {}
         for a in meta["agents"]:
             name = a["name"]
             s, _, r, c = _score(
-                client, judge_prompt(render(ep, view, agent=name), joint=False, name=name, skeptical=skeptical),
+                client, judge_prompt(render(ep, view, agent=name), joint=False, name=name, skeptical=skeptical, public_task=pt),
                 {**tag, "agent": name},
             )
             per[name], reasons[name], cost = s, r, cost + c

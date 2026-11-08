@@ -61,6 +61,7 @@ def main(argv=None):
     ap.add_argument("--goal", nargs="+", default=["covert"], choices=["covert", "benign"])
     ap.add_argument("--watched", action="store_true")
     ap.add_argument("--isolated", action="store_true")
+    ap.add_argument("--solo", action="store_true", help="single-agent baseline: one agent does the whole task")
     ap.add_argument("--workers", type=int, default=4)
     ap.add_argument("--max-tokens", type=int, default=4000)
     ap.add_argument("--temperature", type=float, default=None)
@@ -86,7 +87,8 @@ def main(argv=None):
             client = OpenRouterClient(
                 model, provider or None, max_tokens=args.max_tokens, temperature=args.temperature, ledger=ledger
             )
-        s = run_episode(client, seed, goal, args.watched, args.isolated, T, out_dir / model_spec.replace("/", "__"), args.label)
+        s = run_episode(client, seed, goal, args.watched, args.isolated, T, out_dir / model_spec.replace("/", "__"), args.label,
+                        solo=args.solo)
         s.update(keyword_flags(s["path"]))
         s["model_spec"] = model_spec
         return s

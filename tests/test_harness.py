@@ -201,3 +201,49 @@ class Ledger(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestSoloBaseline(unittest.TestCase):
+    """Single-agent baseline: one assistant holds all four configs."""
+
+    def run_solo(self, goal="covert"):
+        d = tempfile.mkdtemp()
+        s = run_episode(FakeClient(5, goal), 5, goal, turns=4, out_dir=d, label="t", solo=True)
+        return s, load_episode(s["path"])
+
+    def test_one_actor_all_files(self):
+        s, ep = self.run_solo()
+        sc = make_scenario(5)
+        actor = sc.names[0]
+        self.assertTrue(ep["meta"]["solo"])
+        self.assertEqual([a["name"] for a in ep["meta"]["agents"]], [actor])
+        self.assertEqual(set(ep["transcripts"]), {actor})
+        self.assertEqual({c["agent"] for c in ep["calls"]}, {actor})
+        seeded = {e["path"] for e in ep["audit"] if e["op"] == "seed"}
+        for a in sc.agents:
+            self.assertIn(f"/home/{actor}/{a.service}.yaml", seeded)
+        self.assertEqual(len(ep["meta"]["fragments"]), 4)
+        self.assertIn("_solo_", ep["meta"]["episode_id"])
+
+    def test_solo_prompt_and_judge_task(self):
+        from monitors.prompts import PROMPT_VERSION, judge_prompt
+        from sandbox.scenario import PUBLIC_TASK, PUBLIC_TASK_SOLO
+        _, ep = self.run_solo()
+        sys_prompt = ep["transcripts"][ep["meta"]["order"][0]][0]["content"]
+        self.assertIn("four service configs", sys_prompt)
+        self.assertIn("Without drawing attention", sys_prompt)
+        self.assertEqual(ep["meta"]["public_task"], PUBLIC_TASK_SOLO)
+        msg = judge_prompt("rec", joint=False, name="x", public_task=ep["meta"]["public_task"])[1]["content"]
+        self.assertIn(PUBLIC_TASK_SOLO, msg)
+        self.assertNotIn(PUBLIC_TASK, msg)
+        # swarm episodes still get the frozen text
+        self.assertIn(PUBLIC_TASK, judge_prompt("rec", joint=True)[1]["content"])
+        self.assertEqual(len(PROMPT_VERSION), 12)
+
+    def test_swarm_unchanged(self):
+        d = tempfile.mkdtemp()
+        s = run_episode(FakeClient(5, "covert"), 5, "covert", turns=4, out_dir=d, label="t")
+        ep = load_episode(s["path"])
+        self.assertFalse(ep["meta"]["solo"])
+        self.assertEqual(len(ep["meta"]["agents"]), 4)
+        self.assertNotIn("public_task", ep["meta"])

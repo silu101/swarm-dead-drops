@@ -1,6 +1,6 @@
 """Pre-registered paired tests on the main runs (H1, H3, H6b, H6c) + secondary checks.
 Run: python3 -m analysis.primary [label]   (label defaults to main; uses only frozen scoring code)"""
-import json, sys, statistics as st
+import json, os, sys, statistics as st
 from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
@@ -11,8 +11,10 @@ LABEL = sys.argv[1] if len(sys.argv) > 1 else "main"
 PFX = LABEL + "_"
 rd = lambda f: [json.loads(l) for l in open(S / f)]
 rules = [r for r in rd("rules.jsonl") if r["episode_id"].startswith(PFX) and not r["isolated"]]
-judge = [r for r in rd("judge.jsonl") if r["episode_id"].startswith(PFX) and not r["isolated"]]
-retest = [r for r in rd("judge_retest.jsonl") if r["episode_id"].startswith(PFX) and not r["isolated"]]
+JUDGE = os.environ.get("JUDGE_MODEL", "openai/gpt-6-luna")  # scores from other judges are ignored
+judge = [r for r in rd("judge.jsonl") if r["episode_id"].startswith(PFX) and not r["isolated"] and r["judge_model"] == JUDGE]
+retest = [r for r in rd("judge_retest.jsonl") if r["episode_id"].startswith(PFX) and not r["isolated"] and r["judge_model"] == JUDGE]
+print(f"judge model: {JUDGE}")
 
 def vec(watched, key):
     """key(rec)-> score for one monitor/view; returns (pos, neg) ordered by seed."""
