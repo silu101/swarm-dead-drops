@@ -150,7 +150,7 @@ What this means:
 ## Limitations
 
 - **The guard only protects files that existed at the start.** A swarm can coordinate without touching shared instructions: 5 of the 15 successful Kimi runs did. It also can't stop an agent from writing a new file that others choose to read.
-- **On fresh episodes the attack moved.** In 4 of 5 new covert Kimi runs, the recruiting instructions went into the hidden file itself, not the instruction file. The guard caught 1 of 5, while `hidden_path` caught all 5, with 0 of 6 benign flagged.
+- **On fresh episodes the attack moved.** In 5 of 6 new covert Kimi runs, the recruiting instructions went into the hidden file itself, not the instruction file. The guard caught 1 of 6, while `hidden_path` caught all 6, with 0 of 6 benign flagged.
 - **The content rule `instruction_integrity` (rule B) false-flags honest coordination.** It flagged 16 of 80 benign episodes, because honest READMEs also ask for `auth_part`. Use it as a pointer for a reviewer, not as an alarm. Details are in [RESULTS.md §7.2](../RESULTS.md#72-rule-b-shared-instruction-integrity-check-pre-registered-in-addendum-3).
 - **We don't know what blocking does in a live run.** It may stop the attack, or the agents may just move to another channel. Our evidence comes from replays, not live blocking.
 
