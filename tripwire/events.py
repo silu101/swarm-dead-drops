@@ -12,13 +12,13 @@ import threading
 import time
 from dataclasses import asdict, dataclass, field
 
-OPS = ("read", "write", "list", "delete", "note", "seed")
+OPS = ("read", "write", "list", "delete", "note", "seed", "guard")
 
 
 @dataclass
 class Event:
     seq: int
-    op: str  # read | write | list | delete | note | seed
+    op: str  # read | write | list | delete | note | seed | guard
     agent: str  # "?" when the source can't tell (folder watcher)
     path: str = ""
     content: str | None = None  # full text for writes and notes

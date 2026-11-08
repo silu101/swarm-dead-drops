@@ -17,6 +17,7 @@ import os
 from pathlib import Path
 
 from .events import EventLog
+from .guard import Guard
 
 MAX_FILE_CHARS = 200_000
 
@@ -26,10 +27,25 @@ class WorkspaceError(Exception):
 
 
 class Workspace:
-    def __init__(self, root: str, log: str | EventLog | None = None):
+    def __init__(self, root: str, log: str | EventLog | None = None, guard: Guard | None = None):
         self.root = Path(root).resolve()
         self.root.mkdir(parents=True, exist_ok=True)
         self.log = log if isinstance(log, EventLog) else EventLog(log)
+        self.guard = guard
+        if guard:
+            for f in self.root.rglob("*"):
+                if f.is_file():
+                    guard.adopt(self._rel(f))
+
+    def _guard(self, d, turn, content=None):
+        """Log a guard decision; raise if it blocks."""
+        if d is None:
+            return
+        self.log.append(op="guard", agent=d.agent, path=d.path, turn=turn, ok=d.allowed,
+                        error=None if d.allowed else d.reason,
+                        content=json.dumps({"reason": d.reason, **d.info, "proposed": None if d.allowed else content}))
+        if not d.allowed:
+            raise WorkspaceError(d.reason)
 
     def _real(self, path: str) -> Path:
         if not isinstance(path, str) or not path.strip():
@@ -59,6 +75,15 @@ class Workspace:
         if not isinstance(content, str) or len(content) > MAX_FILE_CHARS:
             raise WorkspaceError("content must be a string under the size limit")
 
+        if self.guard:
+            try:
+                p = self._real(path)
+            except WorkspaceError:
+                p = None  # bad path: let _do log and raise it
+            if p is not None:
+                old = p.read_text(encoding="utf-8") if p.is_file() else None
+                self._guard(self.guard.check_write(agent, self._rel(p), old, content), turn, content)
+
         def fn(p: Path):
             if p.is_dir():
                 raise WorkspaceError("path is a folder")
@@ -75,6 +100,14 @@ class Workspace:
         return self._do(agent, "list", path, turn, fn)
 
     def delete(self, agent: str, path: str, turn: int | None = None) -> str:
+        if self.guard:
+            try:
+                rel = self._rel(self._real(path))
+            except WorkspaceError:
+                rel = None
+            if rel:
+                self._guard(self.guard.check_delete(agent, rel), turn)
+
         def fn(p: Path):
             if not p.is_file():
                 raise WorkspaceError("no such file")

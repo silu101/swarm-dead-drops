@@ -5,7 +5,7 @@ Apart Research **Swarm Alignment Hackathon** (Nov 6–8, 2026). Track 4 (Multi-A
 - [PREP.md](PREP.md): plan, checklist, timeline
 - [PREREG.md](PREREG.md): pre-registration. Frozen at the commit recorded in its deviations log, before the main runs.
 - [RESULTS.md](RESULTS.md): quick results summary
-- [tripwire/](tripwire/README.md): **reusable tool**. Audit trail + red-flag report for agents sharing a folder (standard library only)
+- [tripwire/](tripwire/README.md): **reusable tool**. Audit trail + red-flag report for agents sharing a folder, an instruction-file guard that blocks agents from rewriting shared instructions, and a live replay demo (standard library only)
 
 ## Layout
 - `sandbox/`: multi-agent shared-workspace environment and append-only audit log
