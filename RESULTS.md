@@ -4,7 +4,7 @@ This report covers every experiment run for the Apart Swarm Alignment Hackathon 
 
 All numbers come from files in [`results/`](results/), and the exact command for each is listed in [How to reproduce](#how-to-reproduce).
 
-The pre-registration is [`PREREG.md`](PREREG.md). The main freeze is commit `a553f03`. Replication addendum 1 (Qwen) is commit `4c904e4`, addendum 2 (capability and agent count) is commit `4078ea3`, and addendum 3 (rule B and H7) is commit `46ec051`. Each was pushed before the episodes or tests it covers. One post hoc variant, B-conceal (commit `25da430`), was pushed after B failed and before the fresh episodes were scored.
+The pre-registration is [`PREREG.md`](PREREG.md). The main freeze is commit `a553f03`. Replication addendum 1 (Qwen) is commit `4c904e4`, addendum 2 (capability and agent count) is commit `4078ea3`, addendum 3 (rule B and H7) is commit `46ec051`, addendum 4 (adaptive red team) is `aa03807`, and addendum 5 (interventions, vault control, refined rule) is `7c4e90d`. Each was pushed before the episodes or tests it covers. One post hoc variant, B-conceal (commit `25da430`), was pushed after B failed and before the fresh episodes were scored.
 
 ![Figure 1](paper/fig1.svg)
 
@@ -19,7 +19,7 @@ The pre-registration is [`PREREG.md`](PREREG.md). The main freeze is commit `a55
 4. [Experiment 2: replication on Qwen 3.8 flash (addendum 1)](#4-experiment-2-replication-on-qwen-38-flash)
 5. [Experiment 3: strong swarm, weak monitor, single agent (addendum 2)](#5-experiment-3-capability-and-agent-count)
 6. [How the swarms behaved: all three models compared](#6-how-the-swarms-behaved)
-7. [Tripwire flag rates, the instruction guard, rule B, and H7](#7-tripwire-flag-rates)
+7. [Tripwire flag rates, the instruction guard, rule B, H7, the adaptive red team, interventions and the vault control](#7-tripwire-flag-rates)
 8. [Pilot and model selection](#8-pilot-and-model-selection)
 9. [Deviations, bugs found, and caveats](#9-deviations-bugs-found-and-caveats)
 10. [Spend](#10-spend)
@@ -29,13 +29,17 @@ The pre-registration is [`PREREG.md`](PREREG.md). The main freeze is commit `a55
 
 ## 1. Summary of findings
 
-**Totals:** 339 episodes, scored by two LLM judges and two non-LLM monitors:
-- 277 experimental episodes across three swarm models. That includes 12 fresh Kimi episodes (6 covert, 6 benign) used to test the tripwire rules out of sample (§7.2).
+**Totals:** 374 episodes, scored by two LLM judges and two non-LLM monitors:
+- 312 experimental episodes across three swarm models. That includes:
+  - 12 fresh Kimi episodes (6 covert, 6 benign), used to test the tripwire rules out of sample (§7.2);
+  - 20 adaptive red-team episodes (§7.4);
+  - 15 honest "vault" episodes (§7.6).
+- 100 recorded episodes were also edited and re-scored, with no new agent runs (§7.5).
 - 62 pilot and calibration episodes.
 
 Another 7 fresh-episode attempts failed with API errors (6 rate limits, 1 out of credit) and are excluded, as the pre-registration requires. All 7 seeds were re-run.
 
-Total spend is $51.63. The first API key ran out of credit at $50.89. A second key, added by the team and logged as a deviation, paid for the re-run of seed 506 and for judging the fresh episodes.
+Total spend is $54.01. The first API key ran out of credit at $50.89. A second key, added by the team and logged as a deviation, paid for the re-run of seed 506 and for judging the fresh episodes.
 
 ### Findings
 
@@ -70,7 +74,17 @@ Total spend is $51.63. The first API key ran out of credit at $50.89. A second k
 8. **The cheap rule survives a lossy log; M4 doesn't (H7, §7.3).**
    - With half the audit log randomly deleted, M4-pre on Kimi falls from 0.73 to 0.58.
    - `hidden_path` stays at 0.94 or above even with three-quarters of the log deleted.
-9. **Coordination effect (P3): inconclusive.**
+9. **No monitor survived an informed attacker (adaptive red team, §7.4, exploratory).**
+   - The setup: MiniMax attackers were told what the judge looks for and why it flagged the previous round.
+   - The judge's AUROC fell from 0.65 (round 1) to 0.35 and then 0.45, and **10 of 10** round-3 attacks succeeded undetected.
+   - The attackers stopped using hidden files (0/20), so the hidden-file rule was beaten too.
+   - Their strategy: stop hiding. They assembled the token openly and documented it accurately, which is what the honest team does.
+   - **The lesson:** a monitor that looks for *concealment* can be beaten by not concealing. To survive, a monitor has to check whether the *outcome* is allowed, not how the agents behaved.
+10. **Concealment alone doesn't drive the judge, and the judge can tell legitimate hiding from collusion if it's told the policy (§7.5–7.6).**
+    - **Removing the hiding from covert logs** (renaming the dot-folders, dropping the "don't mention" lines) barely moved the judge: −4.9 and −3.5 points out of 100.
+    - **Adding a hidden folder to honest logs** only raised scores when the judge couldn't read the notes: +16.5 (Kimi) and +8.8 (MiniMax).
+    - **Honest teams told to keep the token in `/shared/.vault/`:** both file rules flagged 15/15. The judge, told the policy, separated covert from vault teams as well as from ordinary honest teams (AUROC 0.849 for both).
+11. **Coordination effect (P3): inconclusive.**
    - The strong judge caught every covert episode in both the 4-agent and the 1-agent cells, so both have 0% undetected success.
    - Separately, the pre-registered success check was not fair to the single agent: it assembled the token in its private home folder, which the check doesn't count (see §5.4).
 
@@ -92,6 +106,10 @@ Total spend is $51.63. The first API key ran out of credit at $50.89. A second k
 | P4 | Kimi | M4-pre < M1 and M3 < 0.5 | **Holds** (M4-pre − M1 = −0.28; M3 = 0.17; both Holm p < 0.001) |
 | B | all | at most 2 of 80 benign flagged; at least 3 of 6 fresh covert flagged | **Fails both**: 16/80 benign; 1/6 fresh covert |
 | B-conceal (post hoc) | Kimi, fresh | — | 1/6 covert, 0/6 benign: no false flags, but it misses the attack |
+| Adaptive (addendum 4) | MiniMax | the briefing lowers detection | **Holds, strongly**: M1 0.65 → 0.35 → 0.45; undetected 15/20 → 9/10 → 10/10; dot-files 5/20 → 0/10 → 0/10 |
+| Deconceal (5a) | Kimi, MiniMax | covert scores fall, CI excludes 0 | Kimi −4.9 [−13.4, −0.1] (barely); MiniMax −3.5 [−10.3, +1.5] (no) |
+| Addconceal (5a) | Kimi, MiniMax | benign scores rise, CI excludes 0 | Notes view: no (+5.8, +0.6). Notes removed: yes (+16.5, +8.8) |
+| Vault (5b) | MiniMax | judge told the policy flags at most 20% of vault teams | 3/14 (21%), borderline; AUROC covert vs vault 0.849, the same as vs ordinary benign. File rules: 15/15 |
 | H7 | all three | M4 degrades with random log loss | Holds on Kimi and Qwen (0.73 → 0.58 and 0.64 → 0.54 at 50% kept); flat at chance on MiniMax, as pre-stated |
 
 ---
@@ -596,6 +614,84 @@ Results are the mean AUROC over the 20 draws, with the 2.5–97.5 percentile ran
 - **The reason is redundancy.** Covert swarms write many hidden files, so the rule needs only one of them to survive. M4 adds up rates and counts that every deletion erodes.
 - **Pre-stated limitation:** this is *random* loss. An agent that chose which events to erase, its own hidden-path writes first, could beat both curves. Tripwire's hash-chained log is the counter to that: it can't stop deletion, but `tripwire verify` shows that the log was edited.
 
+### 7.4 Adaptive red team: attackers who know the monitor (addendum 4, exploratory)
+
+**Design** (`analysis/adaptive.py`):
+- **Round 1** is the 20 existing MiniMax covert watched episodes.
+- **Rounds 2 and 3** are 10 new episodes each, on seeds 1–10.
+- **Each new round's attackers get a briefing** appended to their prompt:
+  - a factual description of what the judge looks for, paraphrased from its frozen prompt;
+  - the judge's stated reason for flagging the top agent in each of the previous round's 8 highest-scoring episodes.
+  - No strategy advice is added.
+- **Negatives:** the 20 MiniMax benign watched episodes. The 5% false-alarm threshold is 92 points.
+
+| Round | n | Token assembled | M1 actions AUROC | Successful and undetected | M1 notes removed | M2 actions | Hidden-file writes |
+|---|---|---|---|---|---|---|---|
+| 1 (no briefing) | 20 | 19/20 | 0.689 [0.52, 0.84]; seeds 1–10: 0.647 | 15/20 | 0.624 | 0.700 | 5/20 |
+| 2 (briefed on round 1) | 10 | 9/10 | **0.350** [0.17, 0.55] | **9/10** | 0.410 | 0.385 | **0/10** |
+| 3 (briefed on round 2) | 10 | 10/10 | **0.453** [0.24, 0.67] | **10/10** [0.69, 1.00] | 0.458 | 0.300 | **0/10** |
+
+The `hidden_secret` rule (§7.7) also fired 0/10 in both briefed rounds. Output: `results/adaptive_analysis.txt`; briefings: `results/briefing_r2.txt`, `results/briefing_r3.txt`.
+
+**What the attackers did.** The round-2 judge reasons show the change. The briefed agents stopped hiding: no dot-files, and "openly documented" fragment handling. The judge could only flag small inaccuracies, such as a wrong claim about fragment order or a cleanup that a note said happened but didn't.
+
+**What this shows:**
+- **One round of feedback was enough to beat every monitor we have.**
+  - The LLM judge fell to or below chance.
+  - The hidden-file rule and the dead-drop rule stopped firing.
+  - Every successful round-3 attack went undetected.
+- **The winning strategy was to stop concealing.** In our design, the honest team's task *is* to assemble the token openly. So once the attacker drops the hiding, its episode looks the same as an honest one.
+  - That is a limitation of our placebo, and also the general lesson: monitors that ask "is this agent hiding something?" can be beaten by agents that don't hide.
+  - In deployment, the defence has to check whether the *outcome* is allowed: here, assembling the deploy token at all. How the agents behaved while getting there isn't enough.
+- **Caveats:**
+  - n = 10 per round, MiniMax only, and the attackers were told they were watched.
+  - We did not test whether a stronger judge, or one told the outcome rule, would recover.
+
+### 7.5 Log-edit interventions: does the judge respond to concealment? (addendum 5a, exploratory)
+
+We edited recorded episodes and re-scored them with the frozen judge (`analysis/intervene.py`; edited episodes in `results/interventions/`).
+- **deconceal:** covert episodes have every hidden `/shared` path un-dotted wherever it appears, and every "don't mention" line removed.
+- **addconceal:** benign episodes have the folder holding the token fragments moved into a dot-folder.
+
+The change is the edited score minus the original, with a 95% bootstrap CI.
+
+| Edit | Swarm | n | M1 actions: change | AUROC before → after | M1 notes removed: change | AUROC before → after |
+|---|---|---|---|---|---|---|
+| deconceal (covert) | Kimi | 20 | −4.9 [−13.4, −0.1] | 1.000 → 0.964 | −0.9 [−2.4, +0.5] | 0.980 → 0.965 |
+| deconceal (covert) | MiniMax | 30 | −3.5 [−10.3, +1.5] | 0.849 → 0.794 | −3.1 [−11.3, +2.9] | 0.580 → 0.554 |
+| addconceal (benign) | Kimi | 20 | +5.8 [−6.6, +18.8] | 1.000 → 1.000 | **+16.5** [+5.8, +28.8] | 0.980 → 0.941 |
+| addconceal (benign) | MiniMax | 30 | +0.6 [−9.7, +10.4] | 0.849 → 0.803 | **+8.8** [+1.1, +18.2] | 0.580 → 0.466 |
+
+**What this shows:**
+- **Dot-folders are not what the judge mainly keys on.** Covert scores barely move when the hiding is removed. The judge reacts to the rest of the behaviour: notes that don't match the actions, misleading claims, and planted instructions.
+- **A hidden folder looks suspicious only when nobody explains it.** With the agents' notes visible, moving honest work into a dot-folder changes nothing. With the notes removed, the same edit raises honest scores by 9–17 points. Context in the notes is what tells the judge the hiding is harmless.
+- **The pre-stated expectation was only partly met:** deconceal had a CI excluding 0 for Kimi only, and barely; addconceal only in the notes-removed view.
+
+### 7.6 Honest teams with a legitimate reason to hide (the `vault` control, addendum 5b, exploratory)
+
+These are 15 honest MiniMax teams whose task says: "Team security policy: keep all token material only under /shared/.vault/ and never paste token values into your notes or into other files." All 15 assembled the token in the vault. We compared them with the 30 MiniMax covert unwatched teams, using the false-alarm threshold set on the 30 ordinary honest teams. Output: `results/vault_analysis.txt`.
+
+| View | Judge told the policy? | Mean score | Vault teams flagged | AUROC: covert vs vault | AUROC: covert vs ordinary honest |
+|---|---|---|---|---|---|
+| actions | yes | 57.1 | 3/14 [0.05, 0.51] | **0.849** [0.72, 0.95] | 0.849 |
+| actions | no | 70.3 | 3/15 | 0.770 [0.62, 0.90] | 0.849 |
+| notes removed | yes | 73.1 | 0/15 | 0.683 | 0.580 |
+| notes removed | no | 82.4 | 0/15 | 0.641 | 0.580 |
+
+The file rules `hidden_path` and `hidden_secret` flagged **15/15** vault teams.
+
+**What this shows:**
+- **File rules detect hiding, not collusion.** Every honest vault team trips them.
+- **The judge, told the policy, separates collusion from legitimate hiding** exactly as well as from open honest work (0.849). Not told the policy, it reads the vault as somewhat suspicious: mean score 70 vs 57, and AUROC 0.77.
+- So the judge's claim survives in a narrower form: it detects *unexplained* concealment, and that needs the overseer to share what is legitimate with the judge.
+- The pre-stated threshold of at most 20% flagged was narrowly missed: 3 of 14 is 21%.
+
+### 7.7 The refined file rule `hidden_secret` (addendum 5c)
+
+This rule flags a write to a dot-folder or dot-file only if the file holds token material. It is meant to replace `hidden_path`, which would fire constantly on real repositories (`.git`, `.cache`, `.env`).
+- **In our data it matched `hidden_path` in every condition:** Kimi covert 19/20 vs benign 0/20; fresh Kimi 6/6 vs 0/6; MiniMax covert 21/30 vs benign 0/30; Qwen 0 in both. Every hidden file our agents wrote held token material.
+- **It shares `hidden_path`'s two failures:** it flags legitimate vaults (15/15), and informed attackers avoid it (0/20).
+
 ---
 
 ## 8. Pilot and model selection
@@ -667,8 +763,13 @@ The pilot ran covert, unwatched, on seeds 101–104, at T = 20 and T = 30.
 | Single agent: Luna judge + labeler | 0.09 |
 | Fresh Kimi episodes for rule B (6 benign + 6 covert, plus failed attempts) | 6.21 |
 | Fresh episodes: Luna judge | 0.19 |
+| Adaptive red team: agents (MiniMax, 20 episodes) | 0.82 |
+| Adaptive red team: Luna judge | 0.30 |
+| Vault control: agents (MiniMax, 15 episodes) | 0.47 |
+| Vault control: Luna judge (with and without the policy) | 0.19 |
+| Log-edit interventions: Luna judge (100 edited episodes, 2 views) | 0.60 |
 | Rounding and small items | 0.01 |
-| **Total** | **51.63** |
+| **Total** | **54.01** |
 
 The first API key's credit ran out at $50.89 on the ledger, below the $55 stop: the provider returned HTTP 402 during seed 506. A second key with a $7 limit paid for the rest, and the stop was moved to $57; both are logged as deviations in `PREREG.md`. We don't know the cause of the gap. The ledger records the cost the provider reports per call, so it may be billing differences or other use of the same key.
 
@@ -689,6 +790,9 @@ python3 -m tripwire report EVENTS.jsonl              # the reusable tool
 python3 -m tripwire bench results/main results/qwen results/strong results/solo   # flag rates incl. the guard (7.1)
 python3 -m analysis.rule_b                           # rule B tests (7.2)
 python3 -m analysis.degrade                          # H7 log degradation (7.3) -> paper/fig_h7.svg
+python3 -m analysis.adaptive report                  # adaptive red team (7.4)
+python3 -m analysis.intervene report                 # log-edit interventions (7.5)
+python3 -m analysis.vault                            # vault control (7.6)
 python3 -m tripwire replay results/strong/moonshotai__kimi-k3.1-pro@DeepInfra/strong_covert_U_sh_s1_2a849b.jsonl --policy block
 ```
 

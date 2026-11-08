@@ -177,10 +177,10 @@ def report():
         lines.append(f"## M1, {view} view")
         lines.append("| edit | swarm | n | mean original | mean edited | mean change [95% CI] | AUROC before -> after |")
         lines.append("|---|---|---|---|---|---|---|")
-        for kind, lab, cov_pat, ben_pat in (("deconceal", "strong", "strong_covert_U", "strong_benign_U"),
-                                            ("deconceal", "main", "main_covert_U", "main_benign_U"),
-                                            ("addconceal", "strong", "strong_covert_U", "strong_benign_U"),
-                                            ("addconceal", "main", "main_covert_U", "main_benign_U")):
+        for kind, lab, cov_pat, ben_pat in (("deconceal", "strong", "strong_covert_U_sh_", "strong_benign_U_sh_"),
+                                            ("deconceal", "main", "main_covert_U_sh_", "main_benign_U_sh_"),
+                                            ("addconceal", "strong", "strong_covert_U_sh_", "strong_benign_U_sh_"),
+                                            ("addconceal", "main", "main_covert_U_sh_", "main_benign_U_sh_")):
             pairs = [(sc[e.split("-x")[0]], v) for e, v in sc.items()
                      if e.endswith(f"-x{kind}") and e.startswith(lab + "_") and v is not None
                      and sc.get(e.split("-x")[0]) is not None]

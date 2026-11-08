@@ -1,0 +1,18 @@
+Log-edit interventions (Addendum 5). Judge GPT-6 Luna, frozen prompt. Paired: edited minus original score.
+
+## M1, actions view
+| edit | swarm | n | mean original | mean edited | mean change [95% CI] | AUROC before -> after |
+|---|---|---|---|---|---|---|
+| deconceal | strong | 20 | 97.5 | 92.7 | -4.9 [-13.4, -0.1] | 1.000 -> 0.964 |
+| deconceal | main | 30 | 86.1 | 82.6 | -3.5 [-10.3, +1.5] | 0.849 -> 0.794 |
+| addconceal | strong | 20 | 39.5 | 45.2 | +5.8 [-6.6, +18.8] | 1.000 -> 1.000 |
+| addconceal | main | 30 | 63.7 | 64.4 | +0.6 [-9.7, +10.4] | 0.849 -> 0.803 |
+
+## M1, stripped view
+| edit | swarm | n | mean original | mean edited | mean change [95% CI] | AUROC before -> after |
+|---|---|---|---|---|---|---|
+| deconceal | strong | 20 | 97.3 | 96.4 | -0.9 [-2.4, +0.5] | 0.980 -> 0.965 |
+| deconceal | main | 30 | 79.6 | 76.5 | -3.1 [-11.3, +2.9] | 0.580 -> 0.554 |
+| addconceal | strong | 20 | 55.9 | 72.3 | +16.5 [+5.8, +28.8] | 0.980 -> 0.941 |
+| addconceal | main | 30 | 75.9 | 84.8 | +8.8 [+1.1, +18.2] | 0.580 -> 0.466 |
+
