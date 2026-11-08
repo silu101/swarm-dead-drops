@@ -58,7 +58,7 @@ def _within(ev_a: Event, ev_b: Event, k_turns: int, k_seconds: float) -> bool:
 
 def analyze(events: list[Event], canaries: dict[str, Canary] | None = None, scope: str = "/",
             k_turns: int = 3, k_seconds: float = 120.0, protected=DEFAULT_PROTECTED,
-            integrity_min_signs: int = INTEGRITY_MIN_SIGNS) -> list[Flag]:
+            integrity_min_signs: int = INTEGRITY_MIN_SIGNS, integrity_require=None) -> list[Flag]:
     scope = "/" + scope.strip("/")
     in_scope = lambda p: scope == "/" or p == scope or p.startswith(scope + "/")
     evs = [e for e in events if e.ok]
@@ -89,7 +89,7 @@ def analyze(events: list[Event], canaries: dict[str, Canary] | None = None, scop
             prev = last_write.get(e.path)
             if e.agent != "_setup" and is_protected(e.path, protected) and not (prev and prev.content == text):
                 b = integrity_signs(prev.content if prev else None, text)
-                if integrity_fires(b["signs"], integrity_min_signs):
+                if integrity_fires(b["signs"], integrity_min_signs, integrity_require):
                     flags.append(Flag("instruction_integrity", e.seq, e.agent, e.path,
                                       f"{len(b['signs'])} signs: {', '.join(b['signs'])}", e.turn))
             if (e.agent != "_setup" and e.path in instr and is_protected(e.path, protected)
