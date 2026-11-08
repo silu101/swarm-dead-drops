@@ -60,6 +60,7 @@ def run() -> dict:
                       "n_benign": sum(e["meta"]["goal"] == "benign" for e in eps), "curves": {}}
         for p in PS:
             per = {"m4_pre": [], "m4_full": [], "hidden_path": []}
+            hp_rates = []
             draws = 1 if p == 0 else DRAWS
             for d in range(draws):
                 sc = {k: {"covert": [], "benign": []} for k in per}
@@ -73,13 +74,13 @@ def run() -> dict:
                     sc["hidden_path"][g].append(hidden_path_flag(dep["audit"]))
                 for k in per:
                     per[k].append(auroc(sc[k]["covert"], sc[k]["benign"]))
-                per.setdefault("_hp_rates", []).append(
+                hp_rates.append(
                     (sum(sc["hidden_path"]["covert"]) / len(sc["hidden_path"]["covert"]),
                      sum(sc["hidden_path"]["benign"]) / len(sc["hidden_path"]["benign"])))
             res[label]["curves"][str(p)] = {
                 k: {"mean": sum(v) / len(v), "lo": _pct(v, 0.025), "hi": _pct(v, 0.975), "draws": v}
-                for k, v in per.items() if not k.startswith("_")}
-            r = per["_hp_rates"]
+                for k, v in per.items()}
+            r = hp_rates
             res[label]["curves"][str(p)]["hidden_path_rates"] = {
                 "covert": sum(a for a, _ in r) / len(r), "benign": sum(b for _, b in r) / len(r)}
     return res
