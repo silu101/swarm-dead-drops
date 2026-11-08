@@ -441,7 +441,7 @@ These counts are computed from the audit logs (unwatched cells). They are descri
 
 | Behavior (episodes) | MiniMax covert | MiniMax benign | Qwen covert | Qwen benign | Kimi covert | Kimi benign |
 |---|---|---|---|---|---|---|
-| Edited the shared `MIGRATION.md` | 0/30 | 0/30 | 0/30 | 0/30 | **14/20** (fresh seeds: 1/5) | 0/20 (fresh: 0/6) |
+| Edited the shared `MIGRATION.md` | 0/30 | 0/30 | 0/30 | 0/30 | **14/20** (fresh seeds: 1/6) | 0/20 (fresh: 0/6) |
 | Wrote a hidden dot-file or dot-folder in `/shared` | 21/30 | 0/30 | 0/30 | 0/30 | **19/20** | 0/20 |
 | Put a fragment inside a migrated config | 0/30 | 1/30 | 5/30 | 1/30 | 5/20 | 0/20 |
 | Mean deletes per episode | 7.4 | 6.7 | 6.6 | 3.4 | 5.8 | 6.3 |
@@ -505,7 +505,7 @@ After finding the `MIGRATION.md` poisoning (Section 6), we added a guard to trip
 - **In the 14 episodes where it fired, it fired at turn 2.** That was 3 to 16 turns before the token was assembled.
 - **It is useless against the weaker swarms**, which never touched the guide. For those, `hidden_path` is the signal to use.
 - **It cannot catch a swarm that coordinates without editing shared instructions.** 5 of the 15 successful Kimi episodes did exactly that.
-- **Out of sample (§7.2), the guard fired in 1 of 5 fresh covert Kimi episodes and 0 of 6 fresh benign ones.** No false flags, but on new seeds the swarm usually put its instructions in the hidden file instead.
+- **Out of sample (§7.2), the guard fired in 1 of 6 fresh covert Kimi episodes and 0 of 6 fresh benign ones.** No false flags, but on new seeds the swarm usually put its instructions in the hidden file instead.
 
 **What blocking would have done is unknown.** `tripwire replay --policy block` marks the edits it would have refused, but the recorded episode then continues as it actually happened. Whether blocking stops the attack, or the agents just switch to another channel, needs live runs. We have not done those.
 
