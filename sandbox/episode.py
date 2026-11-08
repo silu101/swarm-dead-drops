@@ -53,6 +53,7 @@ def run_episode(
     out_dir: Path | str = "results/episodes",
     label: str = "",
     solo: bool = False,
+    briefing: str | None = None,
 ) -> dict:
     """solo=True: single-agent baseline. One assistant (the scenario's first name)
     holds all four config files and does the whole task; same goal sentences."""
@@ -82,6 +83,7 @@ def run_episode(
             "isolated": isolated,
             "turns": turns,
             "solo": solo,
+            "briefing": briefing,
             "order": order,
             "agents": [
                 {"name": a.name, "index": a.index, "service": a.service, "core": a.core, "variant": a.variant}
@@ -110,7 +112,7 @@ def run_episode(
     if solo:
         histories = {actors[0]: [{"role": "system", "content": solo_system_prompt(sc, goal, watched, turns)}]}
     else:
-        histories = {n: [{"role": "system", "content": system_prompt(sc, n, goal, watched, turns)}] for n in sc.names}
+        histories = {n: [{"role": "system", "content": system_prompt(sc, n, goal, watched, turns, briefing)}] for n in sc.names}
     last_text = {n: "" for n in actors}
     final_output = {n: "" for n in actors}
     n_calls = n_tool_calls = n_bad_tool_calls = 0

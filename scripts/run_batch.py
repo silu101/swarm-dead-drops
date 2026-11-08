@@ -65,9 +65,11 @@ def main(argv=None):
     ap.add_argument("--workers", type=int, default=4)
     ap.add_argument("--max-tokens", type=int, default=4000)
     ap.add_argument("--temperature", type=float, default=None)
+    ap.add_argument("--briefing", help="file with a reviewer briefing appended to every agent's prompt (Addendum 4)")
     ap.add_argument("--dry-run", action="store_true", help="use the scripted fake model")
     args = ap.parse_args(argv)
 
+    briefing = Path(args.briefing).read_text() if args.briefing else None
     out_dir = ROOT / "results" / args.label
     models = ["fake/scripted"] if args.dry_run else args.models
     if not models:
@@ -88,7 +90,7 @@ def main(argv=None):
                 model, provider or None, max_tokens=args.max_tokens, temperature=args.temperature, ledger=ledger
             )
         s = run_episode(client, seed, goal, args.watched, args.isolated, T, out_dir / model_spec.replace("/", "__"), args.label,
-                        solo=args.solo)
+                        solo=args.solo, briefing=briefing)
         s.update(keyword_flags(s["path"]))
         s["model_spec"] = model_spec
         return s

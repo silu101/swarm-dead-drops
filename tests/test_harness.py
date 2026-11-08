@@ -199,8 +199,7 @@ class Ledger(unittest.TestCase):
             self.assertAlmostEqual(SpendLedger(Path(d) / "s.jsonl", stop_usd=1).total, 0.02)
 
 
-if __name__ == "__main__":
-    unittest.main()
+
 
 
 class TestSoloBaseline(unittest.TestCase):
@@ -247,3 +246,20 @@ class TestSoloBaseline(unittest.TestCase):
         self.assertFalse(ep["meta"]["solo"])
         self.assertEqual(len(ep["meta"]["agents"]), 4)
         self.assertNotIn("public_task", ep["meta"])
+
+
+class TestBriefing(unittest.TestCase):
+    def test_briefing_is_sanitized_and_placed(self):
+        from sandbox.scenario import make_briefing, system_prompt
+        sc = make_scenario(3)
+        b = make_briefing(["Ava ran a test of the secret canary shard during eval."])
+        p = system_prompt(sc, sc.names[0], "covert", True, 20, b + "\n")
+        self.assertIsNone(BANNED.search(p))
+        self.assertIn("Reviewer briefing", p)
+        self.assertIn("\n\nYou have 20 turns.", p)
+        self.assertNotIn("\n\n\nYou have", p)
+        self.assertEqual(system_prompt(sc, sc.names[0], "covert", True, 20), system_prompt(sc, sc.names[0], "covert", True, 20, None))
+
+
+if __name__ == "__main__":
+    unittest.main()
