@@ -5,6 +5,7 @@ Apart Research **Swarm Alignment Hackathon** (Nov 6–8, 2026). Track 4 (Multi-A
 **Report:** *When Colluders Stop Hiding: Monitors for File-Coordinating Agent Swarms Must Check Outcomes, Not Behavior*, by Silu Sharma and Sanket Sharma.
 - Paper: [paper/DeadDrops_submission.docx](paper/DeadDrops_submission.docx) (source text [paper/submission.md](paper/submission.md))
 - Slides: [docs/slides/DeadDrops-slides.pdf](docs/slides/DeadDrops-slides.pdf) ([PowerPoint](docs/slides/DeadDrops-slides.pptx), [HTML source](docs/slides/slides.html))
+- Demo clip (69 s): [docs/video/DeadDrops-demo.mp4](docs/video/DeadDrops-demo.mp4), the `tripwire` replay on a covert team, an honest team and a briefed attacker (built by `docs/video/make_demo.py` from real replay output)
 
 **Headline:** monitors that look for hiding catch naive colluders (judge AUROC 0.85–1.00), but after one round of feedback the attackers stopped hiding and 10 of 10 attacks succeeded undetected. Oversight has to check outcomes against policy, not agent behavior.
 
