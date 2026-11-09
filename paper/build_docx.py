@@ -183,6 +183,12 @@ def build(template: Path, figdir: Path, out: Path):
         name, aff = slots.get(k, ("", ""))
         doc = doc.replace(f">Author name {k + 1}<", f">{escape(name, quote=False)}<", 1)
         doc = doc.replace(">Affiliation<", f">{escape(aff, quote=False)}<", 1)
+    # the template's author grid is 3 x 690 twips (0.48 in per name), which breaks names mid-word: widen it
+    t3 = re.search(r'<w:tblStyle w:val="Table3"/>.*?</w:tblGrid>', doc, re.S)
+    widths = iter(["2900", "400", "2900"] * 2)
+    fixed = re.sub(r'(<w:gridCol w:w=")690(")', lambda m: m.group(1) + next(widths) + m.group(2), t3.group(0))
+    fixed = re.sub(r'<w:tblW w:w="[\d.]+" w:type="dxa"/>', '<w:tblW w:w="6200" w:type="dxa"/>', fixed, count=1)
+    doc = doc[:t3.start()] + fixed + doc[t3.end():]
     # abstract: replace the guidance paragraph inside the Table4 box
     t4 = re.search(r'<w:tbl><w:tblPr><w:tblStyle w:val="Table4"/>.*?</w:tbl>', doc, re.S)
     t4x = t4.group(0)
