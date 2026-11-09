@@ -43,19 +43,18 @@ def svg(rs) -> str:
         dash = " stroke-dasharray='4 3'" if a == 0.5 else ""
         o.append(f"<line x1='{L}' y1='{y(a):.1f}' x2='{R}' y2='{y(a):.1f}' stroke='{MUTED if a == 0.5 else GRID}'{dash}/>")
         t(L - 8, f"{y(a) + 4:.1f}", f"{a:g}", 11, MUTED, "end")
-    t(R, f"{y(0.5) - 6:.1f}", "chance", 11, MUTED, "end")
+    t(L + 4, f"{y(0.5) + 14:.1f}", "chance", 11, MUTED, "start")
     series = (("m1", BLUE, "M1 per-agent judge"), ("m1s", ORANGE, "M1, notes removed"), ("m2", GREEN, "M2 joint judge"))
     for r in rs:
         x = xs[r["round"]]
         o.append(f"<line x1='{x:.1f}' y1='{y(r['lo']):.1f}' x2='{x:.1f}' y2='{y(r['hi']):.1f}' stroke='{BLUE}' stroke-width='2'/>")
-    dodge = {"m1": 0, "m1s": 9, "m2": -9}
+    dodge = {"m1": 0, "m1s": 16, "m2": -16}
     for k, col, _ in series:
         pts = [(xs[r["round"]] + dodge[k], y(r[k])) for r in rs]
         o.append(f"<polyline fill='none' stroke='{col}' stroke-width='2' points='" + " ".join(f"{a:.1f},{b:.1f}" for a, b in pts) + "'/>")
         for a, b in pts:
             o.append(f"<circle cx='{a:.1f}' cy='{b:.1f}' r='4.5' fill='{col}' stroke='#ffffff' stroke-width='2'/>")
     for r in rs:
-        t(f"{xs[r['round']] - 22:.1f}", f"{y(r['m1']) + (22 if r['round'] == 3 else 4):.1f}", f"M1 {r['m1']:.2f}", 11, INK, "end")
         t(f"{xs[r['round']]:.1f}", B + 18, f"round {r['round']}", 11, MUTED, "middle")
         t(f"{xs[r['round']]:.1f}", B + 32, "no briefing" if r["round"] == 1 else "briefed", 11, MUTED, "middle")
     for i, (_, col, name) in enumerate(series):

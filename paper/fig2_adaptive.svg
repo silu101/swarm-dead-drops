@@ -11,7 +11,7 @@
 <text x='52' y='129.0' font-family='Helvetica, Arial, sans-serif' font-size='11' fill='#6b6a64' text-anchor='end' font-weight='normal'>0.75</text>
 <line x1='60' y1='70.0' x2='380' y2='70.0' stroke='#d9d8d2'/>
 <text x='52' y='74.0' font-family='Helvetica, Arial, sans-serif' font-size='11' fill='#6b6a64' text-anchor='end' font-weight='normal'>1</text>
-<text x='380' y='174.0' font-family='Helvetica, Arial, sans-serif' font-size='11' fill='#6b6a64' text-anchor='end' font-weight='normal'>chance</text>
+<text x='64' y='194.0' font-family='Helvetica, Arial, sans-serif' font-size='11' fill='#6b6a64' text-anchor='start' font-weight='normal'>chance</text>
 <line x1='100.0' y1='175.6' x2='100.0' y2='105.2' stroke='#2a78d6' stroke-width='2'/>
 <line x1='220.0' y1='252.6' x2='220.0' y2='169.0' stroke='#2a78d6' stroke-width='2'/>
 <line x1='340.0' y1='237.2' x2='340.0' y2='142.6' stroke='#2a78d6' stroke-width='2'/>
@@ -19,21 +19,18 @@
 <circle cx='100.0' cy='138.4' r='4.5' fill='#2a78d6' stroke='#ffffff' stroke-width='2'/>
 <circle cx='220.0' cy='213.0' r='4.5' fill='#2a78d6' stroke='#ffffff' stroke-width='2'/>
 <circle cx='340.0' cy='190.3' r='4.5' fill='#2a78d6' stroke='#ffffff' stroke-width='2'/>
-<polyline fill='none' stroke='#eb6834' stroke-width='2' points='109.0,152.7 229.0,199.8 349.0,189.2'/>
-<circle cx='109.0' cy='152.7' r='4.5' fill='#eb6834' stroke='#ffffff' stroke-width='2'/>
-<circle cx='229.0' cy='199.8' r='4.5' fill='#eb6834' stroke='#ffffff' stroke-width='2'/>
-<circle cx='349.0' cy='189.2' r='4.5' fill='#eb6834' stroke='#ffffff' stroke-width='2'/>
-<polyline fill='none' stroke='#1baf7a' stroke-width='2' points='91.0,136.0 211.0,205.3 331.0,224.0'/>
-<circle cx='91.0' cy='136.0' r='4.5' fill='#1baf7a' stroke='#ffffff' stroke-width='2'/>
-<circle cx='211.0' cy='205.3' r='4.5' fill='#1baf7a' stroke='#ffffff' stroke-width='2'/>
-<circle cx='331.0' cy='224.0' r='4.5' fill='#1baf7a' stroke='#ffffff' stroke-width='2'/>
-<text x='78.0' y='142.4' font-family='Helvetica, Arial, sans-serif' font-size='11' fill='#1f1f1e' text-anchor='end' font-weight='normal'>M1 0.69</text>
+<polyline fill='none' stroke='#eb6834' stroke-width='2' points='116.0,152.7 236.0,199.8 356.0,189.2'/>
+<circle cx='116.0' cy='152.7' r='4.5' fill='#eb6834' stroke='#ffffff' stroke-width='2'/>
+<circle cx='236.0' cy='199.8' r='4.5' fill='#eb6834' stroke='#ffffff' stroke-width='2'/>
+<circle cx='356.0' cy='189.2' r='4.5' fill='#eb6834' stroke='#ffffff' stroke-width='2'/>
+<polyline fill='none' stroke='#1baf7a' stroke-width='2' points='84.0,136.0 204.0,205.3 324.0,224.0'/>
+<circle cx='84.0' cy='136.0' r='4.5' fill='#1baf7a' stroke='#ffffff' stroke-width='2'/>
+<circle cx='204.0' cy='205.3' r='4.5' fill='#1baf7a' stroke='#ffffff' stroke-width='2'/>
+<circle cx='324.0' cy='224.0' r='4.5' fill='#1baf7a' stroke='#ffffff' stroke-width='2'/>
 <text x='100.0' y='308' font-family='Helvetica, Arial, sans-serif' font-size='11' fill='#6b6a64' text-anchor='middle' font-weight='normal'>round 1</text>
 <text x='100.0' y='322' font-family='Helvetica, Arial, sans-serif' font-size='11' fill='#6b6a64' text-anchor='middle' font-weight='normal'>no briefing</text>
-<text x='198.0' y='217.0' font-family='Helvetica, Arial, sans-serif' font-size='11' fill='#1f1f1e' text-anchor='end' font-weight='normal'>M1 0.35</text>
 <text x='220.0' y='308' font-family='Helvetica, Arial, sans-serif' font-size='11' fill='#6b6a64' text-anchor='middle' font-weight='normal'>round 2</text>
 <text x='220.0' y='322' font-family='Helvetica, Arial, sans-serif' font-size='11' fill='#6b6a64' text-anchor='middle' font-weight='normal'>briefed</text>
-<text x='318.0' y='212.3' font-family='Helvetica, Arial, sans-serif' font-size='11' fill='#1f1f1e' text-anchor='end' font-weight='normal'>M1 0.45</text>
 <text x='340.0' y='308' font-family='Helvetica, Arial, sans-serif' font-size='11' fill='#6b6a64' text-anchor='middle' font-weight='normal'>round 3</text>
 <text x='340.0' y='322' font-family='Helvetica, Arial, sans-serif' font-size='11' fill='#6b6a64' text-anchor='middle' font-weight='normal'>briefed</text>
 <rect x='60' y='38' width='12' height='12' rx='3' fill='#2a78d6'/>

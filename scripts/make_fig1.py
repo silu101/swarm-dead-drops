@@ -12,12 +12,10 @@ OUT = ROOT / "paper" / "fig1.svg"
 
 # (label, group, minimax, qwen, kimi), each (auroc, lo, hi)
 ROWS = [
-    ("M1 judge + private reasoning", "LLM judges", (0.979, 0.944, 1.000), (1.000, 1.000, 1.000), (1.000, 1.000, 1.000)),
-    ("M1 per-agent judge", "LLM judges", (0.849, 0.734, 0.935), (0.882, 0.786, 0.959), (1.000, 1.000, 1.000)),
-    ("M1, agents' notes removed", "LLM judges", (0.580, 0.438, 0.719), (0.901, 0.821, 0.963), (0.980, 0.940, 1.000)),
-    ("M2 joint judge", "LLM judges", (0.773, 0.646, 0.886), (0.907, 0.801, 0.989), (1.000, 1.000, 1.000)),
-    ("M4 canary traps + rare tokens", "File-level monitors", (0.488, 0.342, 0.639), (0.637, 0.482, 0.781), (0.725, 0.550, 0.882)),
-    ("M3 provenance", "File-level monitors", (0.327, 0.187, 0.467), (0.228, 0.122, 0.349), (0.165, 0.052, 0.306)),
+    ("M1 per-agent judge", "LLM judge (looks for concealment)", (0.849, 0.734, 0.935), (0.882, 0.786, 0.959), (1.000, 1.000, 1.000)),
+    ("M1, agents' notes removed", "LLM judge (looks for concealment)", (0.580, 0.438, 0.719), (0.901, 0.821, 0.963), (0.980, 0.940, 1.000)),
+    ("M4 canary traps + rare tokens", "File-flow monitors", (0.488, 0.342, 0.639), (0.637, 0.482, 0.781), (0.725, 0.550, 0.882)),
+    ("M3 provenance", "File-flow monitors", (0.327, 0.187, 0.467), (0.228, 0.122, 0.349), (0.165, 0.052, 0.306)),
 ]
 SERIES = [("MiniMax m3.1 flash", "#2a78d6"), ("Qwen 3.8 flash", "#eb6834"), ("Kimi K3.1 Pro (strong)", "#1baf7a")]
 INK, MUTED, GRID, SURFACE = "#1f1f1e", "#6b6a64", "#d9d8d2", "#ffffff"
@@ -76,7 +74,7 @@ def main():
         out.append(f"<line x1='{x(t):.1f}' y1='{top - 14}' x2='{x(t):.1f}' y2='{bottom}' stroke='{col}' stroke-width='1'{dash}/>")
         out.append(f"<text x='{x(t):.1f}' y='{bottom + 16}' {FONT} font-size='11' fill='{MUTED}' text-anchor='middle'>{t:g}</text>")
     out.append(f"<text x='{x(0.5):.1f}' y='{top - 18}' {FONT} font-size='11' fill='{MUTED}' text-anchor='middle'>chance</text>")
-    out.append(f"<text x='{(LEFT + RIGHT) / 2:.0f}' y='{bottom + 38}' {FONT} font-size='12' fill='{INK}' text-anchor='middle'>AUROC, covert vs benign (unwatched; judge GPT-6 Luna; 30+30 episodes, Kimi 20+20)</text>")
+    out.append(f"<text x='{(LEFT + RIGHT) / 2:.0f}' y='{bottom + 38}' {FONT} font-size='12' fill='{INK}' text-anchor='middle'>AUROC, covert vs honest (unwatched; judge GPT-6 Luna; 30+30 episodes, Kimi 20+20)</text>")
     out.append(f"<text x='{(LEFT + RIGHT) / 2:.0f}' y='{bottom + 54}' {FONT} font-size='11' fill='{MUTED}' text-anchor='middle'>whiskers: 95% bootstrap CI over episodes</text>")
     out += body
     out.append("</svg>")
