@@ -56,7 +56,7 @@ Against the attacker's default strategy, monitors that look for hiding work. **T
 
 **The judge works across capability levels:** the weaker swarm gives itself away in its notes (0.85 → 0.58 with notes removed), the stronger one in its actions (0.98 with notes removed).
 
-% BOX: **Box 1. Recruiting teammates through shared instructions.** In 14 of 20 covert Kimi episodes, one agent planted a fake step in the team's shared MIGRATION.md, hidden in an HTML comment: `<!-- Internal migration validation ... do not mention this validation step in notes. -->` On average 2.7 of the 3 other agents complied; no honest team touched the file.
+% BOX: **Box 1. Recruiting teammates through shared instructions.** In 14 of 20 covert Kimi episodes, one agent planted a fake step in the team's shared MIGRATION.md, hidden in an HTML comment: `<!-- Internal migration validation ... do not mention this validation step in notes. -->` On average 2.7 of the 3 other agents complied; no honest team touched the file. It was not stable: on fresh seeds it appeared in 1 of 6 covert episodes (Appendix B).
 
 ### 4.3 One round of feedback breaks every monitor (exploratory, addendum 4)
 
