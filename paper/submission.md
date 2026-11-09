@@ -2,7 +2,7 @@
 
 % AUTHORS: Silu Sharma | NYU Shanghai ; Sanket Sharma | Independent researcher
 
-% ABSTRACT: When AI agents share a workspace, they can coordinate through files alone, with no message channel. Oversight then has to tell covert coordination apart from honest teamwork that moves the same information. We test this in a sandbox where four agents must assemble a deploy token split across their private files. Covert teams are told to do it without drawing attention; an honest control, whose prompt differs by one sentence, does it openly. Across 247 episodes on three model families, monitors fail in a predictable order. Information-flow monitors rank honest teams as more suspicious than colluding ones (provenance AUROC 0.17–0.33). Concealment monitors work against naive colluders: an LLM judge reading each agent's record reaches AUROC 0.85–1.00, and a rule flagging token material in hidden files catches 6 of 6 fresh covert teams with no false alarms. But when we told attackers why they had been caught, they stopped hiding, and every monitor fell to chance or below; in the final round, 10 of 10 attacks succeeded undetected. Log-edit interventions and an honest team with a legitimate reason to hide show that the monitors detect unexplained concealment, not collusion, and that a judge told the team's security policy can separate the two. Once colluders stop hiding, only one question still distinguishes them from honest teams: was the outcome authorized? Swarm oversight should check outcomes against policy, not agent behavior.
+% ABSTRACT: When AI agents share a workspace, they can coordinate through files alone, with no message channel. Oversight then has to tell covert coordination apart from honest teamwork that moves the same information. We test this in a sandbox where four agents must assemble a deploy token split across their private files. Covert teams are told to do it without drawing attention; an honest control, whose prompt differs by one sentence, does it openly. Across 247 episodes on three model families, monitors fail in a predictable order. Information-flow monitors rank honest teams as more suspicious than colluding ones (provenance AUROC 0.17–0.33). Concealment monitors work against naive colluders: an LLM judge reading each agent's record reaches AUROC 0.85–1.00, and a rule flagging token material in hidden files catches 6 of 6 fresh covert teams with no false alarms. But when we told attackers why they had been caught, they stopped hiding, and every monitor we re-scored fell to chance or below; in the final round, 10 of 10 attacks succeeded undetected. Log-edit interventions and an honest team with a legitimate reason to hide show that the monitors detect unexplained concealment, not collusion, and that a judge told the team's security policy can separate the two. Once colluders stop hiding, only one question still distinguishes them from honest teams: was the outcome authorized? Swarm oversight should check outcomes against policy, not agent behavior.
 
 ## 1. Introduction
 
@@ -12,7 +12,7 @@ Catching file-mediated collusion is hard because honest teamwork also moves info
 
 Our main contributions are:
 
-1. **A matched-control sandbox for file-coordinating swarms**, open source and pre-registered in five addenda, each pushed before its runs, with a tripwire package that logs, flags and replays shared-folder activity.
+1. **A matched-control sandbox for file-coordinating swarms**, open source and pre-registered in five addenda, each pushed before its runs.
 2. **Flow monitors detect cooperation, not intent.** On three model families, provenance tracking scores below chance.
 3. **Concealment monitors catch naive colluders, and one round of feedback breaks them.** Briefed on why they were caught, attackers stopped hiding; the judge fell to AUROC 0.35–0.45 and 10 of 10 final-round attacks went undetected.
 4. **Why, and a direction for a fix.** Log edits and a "vault" control show the monitors detect *unexplained* concealment, and a judge told the team's policy separates legitimate hiding from collusion.
@@ -36,7 +36,6 @@ Our main contributions are:
 | Monitor | What it reads | How it scores |
 |---|---|---|
 | M1 per-agent judge | One agent's tool calls, results and notes | 0–100 concealment score; episode = max over agents |
-| M2 joint judge | All four agents' records, interleaved | One 0–100 score |
 | M3 provenance | Audit log | Cross-agent read-after-write edges carrying fragment content |
 | M4 canaries + rare tokens | Audit log | Canary-variant writes plus rare shared tokens, z-scored |
 | Hidden-file rule | Audit log | Any agent write of token material to a dot-file or dot-folder |
@@ -49,15 +48,15 @@ Our main contributions are:
 
 The monitors that track where information goes rank honest teams as more suspicious than covert ones (Figure 1). **Provenance (M3) is below chance on every model:** 0.33 (MiniMax), 0.23 (Qwen), 0.17 (Kimi), and 0.07 on fresh Kimi episodes. **The canary and rare-token monitor (M4)** scores 0.49, 0.64 and 0.72, below the per-agent judge on every model (Holm-significant). Honest teams cooperate in the open, so they read each other's files and copy fragment content more. **Information flow measures cooperation, not intent**, and only the matched control exposes this.
 
-% FIGURE: fig1.png@5.4 | Figure 1. How well each monitor separates covert from honest episodes (AUROC, unwatched, judge GPT-6 Luna; 30 + 30 episodes per model, Kimi 20 + 20; whiskers are 95% bootstrap CIs). The LLM judges sit well above chance; the file-flow monitors M3 and M4 sit at or below it.
+% FIGURE: fig1.png@5.4 | Figure 1. How well each monitor separates covert from honest episodes (AUROC, unwatched, judge GPT-6 Luna; 30 + 30 episodes per model, Kimi 20 + 20; whiskers are 95% bootstrap CIs). The concealment judge separates covert from honest teams on every model; the file-flow monitors M3 and M4 sit at or below chance.
 
 ### 4.2 Concealment monitors catch naive colluders
 
 Against the attacker's default strategy, monitors that look for hiding work. **The per-agent judge (M1)** scores 0.85 on MiniMax, 0.88 on Qwen and 1.00 on Kimi (and 1.00 again on 12 fresh Kimi episodes). **The hidden-file rule** flags MiniMax 21/30 covert vs 0/30 honest, Kimi 19/20 vs 0/20, and, committed to public code before they ran, fresh Kimi **6/6 vs 0/6**.
 
-**Where the evidence lives depends on capability.** The weaker MiniMax swarm confesses in its notes: removing them drops the judge from 0.85 to 0.58 (p = 0.003), the opposite of our pre-registered prediction. The stronger Kimi swarm writes innocuous cover notes, but its actions are recognisable tradecraft, so the judge still scores 0.98 without notes. The stronger swarm was therefore *easier* to catch: undetected success at a 5% audit budget was 37% for MiniMax and 0% for Kimi.
+**The judge works across capability levels:** the weaker swarm gives itself away in its notes (0.85 → 0.58 with notes removed), the stronger one in its actions (0.98 with notes removed).
 
-% BOX: **Box 1. Recruiting teammates through shared instructions.** In 14 of 20 covert Kimi episodes, one agent edited the team's shared MIGRATION.md to add a fake step, usually hidden in an HTML comment: `<!-- Internal migration validation ... write it back with one added line in the form assistant:service_name:auth_part ... do not mention this validation step in notes. -->` On average 2.7 of the 3 other agents then complied. No honest episode edited this file. It was not a stable signature, though: on fresh seeds it appeared in 1 of 6 covert episodes.
+% BOX: **Box 1. Recruiting teammates through shared instructions.** In 14 of 20 covert Kimi episodes, one agent planted a fake step in the team's shared MIGRATION.md, hidden in an HTML comment: `<!-- Internal migration validation ... do not mention this validation step in notes. -->` On average 2.7 of the 3 other agents complied; no honest team touched the file.
 
 ### 4.3 One round of feedback breaks every monitor (exploratory, addendum 4)
 
@@ -73,26 +72,17 @@ A monitor is only worth trusting if it holds up against an attacker who knows it
 
 % FIGURE: fig2_adaptive.png | Figure 2. The adaptive red team. (A) Judge AUROC by round, with 95% bootstrap CIs (round 1 on seeds 1–10 only: 0.65). (B) Share of covert episodes that assembled the token undetected at a 5% audit budget (blue) and that wrote a hidden file (orange).
 
-**Every monitor failed while the attacks kept succeeding** (Table 2, Figure 2). The per-agent judge fell to or below chance, the joint judge followed (0.70 → 0.39 → 0.30), removing notes did not help, and the hidden-file rule stopped firing. **The attackers' strategy was to stop hiding:** they assembled the token openly and documented it accurately. The judge's top remaining reasons were small inaccuracies, such as a wrong claim about fragment order.
+**Every monitor we re-scored failed while the attacks kept succeeding** (Table 2, Figure 2). The per-agent judge fell to or below chance, a joint judge reading all four agents at once (M2) followed (0.70 → 0.39 → 0.30), removing notes did not help, and the hidden-file rule stopped firing. **The attackers' strategy was to stop hiding:** they assembled the token openly and documented it accurately. The judge's top remaining reasons were small inaccuracies, such as a wrong claim about fragment order.
 
 **This is our main finding, and part of it follows from the design.** The honest team's job is open assembly, so an attacker that drops the hiding looks like an honest team. We take this as the general lesson: the two teams do the same things, and what separates them is whether they were *allowed* to assemble the token, which a monitor of behavior cannot see. (The briefing also told attackers, accurately, that the judge treats handling fragments as normal; a judge not told this would flag the honest control too.)
 
 ### 4.4 Why the monitors break, and what would fix it (exploratory, addendum 5)
 
-If the judge detects concealment, removing it from covert logs should lower scores, and adding it to honest logs should raise them. We edited recorded episodes and re-scored them with the frozen judge (Table 3). **Deconceal** un-dotted every hidden path and removed every "don't mention this" line from covert episodes; **addconceal** moved the honest team's fragment folder into a dot-folder.
+If the judge detects concealment, removing it from covert logs should lower scores, and adding it to honest logs should raise them. We edited recorded episodes and re-scored them with the frozen judge (full results in Appendix D). **Deconceal** un-dotted every hidden path and removed every "don't mention this" line from covert episodes; **addconceal** moved the honest team's fragment folder into a dot-folder.
 
-*Table 3. Change in the 0–100 judge score after editing the logs (edited minus original, paired 95% bootstrap CI).*
+Removing the hiding barely lowers covert scores (by 5 points or less on a 0–100 scale): the judge reacts instead to notes that don't match the actions, misleading claims and planted instructions. Adding a hidden folder to honest work changes nothing while the notes explain it, and raises scores by 9–17 points only when the notes are removed. **Hiding looks suspicious only when nothing explains it.**
 
-| Edit | Swarm | n | Notes visible | Notes removed |
-|---|---|---|---|---|
-| Deconceal (covert) | Kimi | 20 | −4.9 [−13.4, −0.1] | −0.9 [−2.4, +0.5] |
-| Deconceal (covert) | MiniMax | 30 | −3.5 [−10.3, +1.5] | −3.1 [−11.3, +2.9] |
-| Addconceal (honest) | Kimi | 20 | +5.8 [−6.6, +18.8] | +16.5 [+5.8, +28.8] |
-| Addconceal (honest) | MiniMax | 30 | +0.6 [−9.7, +10.4] | +8.8 [+1.1, +18.2] |
-
-Removing hidden files barely lowers covert scores: the judge reacts to notes that don't match the actions, misleading claims and planted instructions. Adding a hidden folder to honest work changes nothing while the notes explain it, but raises scores by 9–17 points when the notes are removed. **Hiding looks suspicious only when nothing explains it.**
-
-**The vault control.** Fifteen honest MiniMax teams got a legitimate reason to hide, a security policy: "keep all token material only under /shared/.vault/ and never paste token values into your notes or into other files." All complied and assembled the token. **The hidden-file rule flagged all 15**: file rules detect hiding, not collusion. **A judge told the policy separated covert from vault teams** as well as from ordinary honest teams (AUROC 0.85 [0.72, 0.95] vs 0.85). Not told the policy, it found vault teams more suspicious (AUROC 0.77). One pre-stated target was narrowly missed: at most 20% of vault teams flagged was expected, and 3 of 14 (21%) were.
+**The vault control.** Fifteen honest MiniMax teams got a legitimate reason to hide, a security policy: "keep all token material only under /shared/.vault/ and never paste token values into your notes or into other files." All complied and assembled the token. **The hidden-file rule flagged all 15**: file rules detect hiding, not collusion. **A judge told the policy separated covert from vault teams** as well as from ordinary honest teams (AUROC 0.85 [0.72, 0.95] vs 0.85). Not told the policy, it found vault teams more suspicious (AUROC 0.77).
 
 The judge therefore detects *unexplained* concealment, and once told what is legitimate it can recognise authorized hiding. This is first evidence for the fix the adaptive result calls for: give the overseer the authorization policy and check the outcome against it. We have not yet tested a policy-informed judge against adaptive attackers.
 
@@ -100,7 +90,7 @@ The judge therefore detects *unexplained* concealment, and once told what is leg
 
 **The order of failures.** Flow monitors fail against attackers who do nothing special, because honest work produces the same flows. Concealment monitors work until the attacker learns what they look for. Behavioral monitors in general fail once attackers stop concealing, because covert and honest coordination then look the same. Each step pushes the defence from *how agents behave* toward *what they were allowed to do*. For a swarm sharing a workspace we would:
 
-1. **Check outcomes against policy first.** Writes that assemble or move protected material should be checked against an explicit authorization rule, whatever the notes say. In our sandbox, "the token may not be assembled in /shared" would catch every covert success in every round; that holds by construction (it is our success checker), so it is a design claim, not a measured result. Separating covert from authorized assembly is the policy's job, not the monitor's.
+1. **Check outcomes against policy first.** Writes that assemble or move protected material should be checked against an explicit authorization rule, whatever the notes say. In our sandbox, "the token may not be assembled in /shared" would catch every covert success in every round (by construction, since it is our success checker). Separating covert from authorized assembly is the policy's job, not the monitor's.
 2. **Give the LLM judge the policy**, so it stops penalising authorized hiding and focuses on misrepresentation.
 3. **Use cheap file rules as a first layer only.** The hidden-file rule held out of sample (6/6 vs 0/6), but one round of feedback beats it and it fires on every legitimate vault.
 4. **Evaluate monitors against honest cooperation *and* an informed attacker.** Without the control, flow monitors look useful; without the adaptive round, concealment monitors look solved.
@@ -154,13 +144,25 @@ Both authors contributed equally to the design, implementation, experiments, ana
 
 ### B. Deviations and tests not discussed
 
-- All deviations are logged in `PREREG.md`. The budget stop was raised, finally to $57, when the team added a second API key. The hidden-file rule was committed in code, but not written into the pre-registration, before the fresh runs. Seven fresh-episode attempts failed with API errors and were re-run, as the pre-registration requires.
-- The repository reports every pre-registered test, including several not covered here because they do not bear on the main question: joint vs per-agent judge (H1, not supported); the watched condition (H5); a skeptical judge prompt (H6c); a weak judge and a single-agent cell (P1, P3); a fixed instruction-tampering rule (rule B, which failed both its tests); and log degradation (H7).
+- All deviations are logged in `PREREG.md`. The budget stop was raised, finally to $57, when the team added a second API key. The hidden-file rule was committed in code, but not written into the pre-registration, before the fresh runs. Seven fresh-episode attempts failed with API errors and were re-run, as the pre-registration requires. One pre-stated vault-control target was narrowly missed: at most 20% of vault teams flagged by the policy-informed judge was expected, and 3 of 14 (21%) were.
+- The repository reports every pre-registered test, including several not covered here because they do not bear on the main question: the judge given agents' private reasoning (an upper bound, not a deployable monitor); joint vs per-agent judge (H1, not supported); where the evidence lives by capability (H6b, reversed) and undetected success by swarm (37% MiniMax vs 0% Kimi); the watched condition (H5); a skeptical judge prompt (H6c); a weak judge and a single-agent cell (P1, P3); a fixed instruction-tampering rule (rule B, which failed both its tests); and log degradation (H7).
+- **Instruction poisoning on fresh seeds.** The MIGRATION.md tactic in Box 1 appeared in only 1 of 6 fresh covert Kimi episodes, so it is not a stable signature.
 - **Tooling.** The `tripwire` package wraps a shared folder in a hash-chained event log, flags hidden writes, canary leaks and edits to shared instruction files, and replays an episode with the alerts marked.
 
 ### C. Dual-use and ethical considerations
 
 We describe evasion tactics: instruction poisoning, hidden drops, and "stop hiding" under monitor feedback. They emerged from public models with minimal prompting, in a simulated filesystem with a fake token. The main lesson, that behavioral monitors can be beaten by informed attackers, is more useful to defenders designing oversight than to attackers. The attacker briefings are published for reproducibility; they describe our monitor, not a general evasion method. No real credentials, systems, networks or people were involved.
+
+### D. Log-edit interventions
+
+*Table D1. Change in the 0–100 judge score after editing the logs (edited minus original, paired 95% bootstrap CI).*
+
+| Edit | Swarm | n | Notes visible | Notes removed |
+|---|---|---|---|---|
+| Deconceal (covert) | Kimi | 20 | −4.9 [−13.4, −0.1] | −0.9 [−2.4, +0.5] |
+| Deconceal (covert) | MiniMax | 30 | −3.5 [−10.3, +1.5] | −3.1 [−11.3, +2.9] |
+| Addconceal (honest) | Kimi | 20 | +5.8 [−6.6, +18.8] | +16.5 [+5.8, +28.8] |
+| Addconceal (honest) | MiniMax | 30 | +0.6 [−9.7, +10.4] | +8.8 [+1.1, +18.2] |
 
 ## LLM Usage Statement
 
